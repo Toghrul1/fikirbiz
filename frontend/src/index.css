@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-ivory: #EFE7DC;
+  --color-brand-gold: #D4AF37;
+  --color-brand-khaki: #5B5A3D;
+  --color-brand-gray: #CACECF;
+  --color-brand-white: #FFFFFF;
+  --color-brand-green: #217027;
+  --color-brand-navy: #0D1B2A;
+  
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-ivory text-brand-navy font-sans antialiased;
+  }
+}

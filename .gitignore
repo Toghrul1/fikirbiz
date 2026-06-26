@@ -20,5 +20,9 @@ build/
 .idea/
 .DS_Store
 
+# Secrets / API keys
+*.txt
+!README.md
+
 # Logs
 *.log

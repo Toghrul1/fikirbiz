@@ -35,6 +35,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 def set_auth_cookies(response: Response, access_token: str, refresh_token: str, remember_me: bool = False):
     """Tokenləri HttpOnly cookie olaraq təyin edir."""
     secure = not settings.DEBUG
+    samesite = "none" if not settings.DEBUG else "lax"
 
     # Access token (1 saat)
     response.set_cookie(
@@ -42,7 +43,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str, 
         value=access_token,
         httponly=True,
         secure=secure,
-        samesite="strict",
+        samesite=samesite,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
     
@@ -55,7 +56,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str, 
         value=refresh_token,
         httponly=True,
         secure=secure,
-        samesite="strict",
+        samesite=samesite,
         max_age=refresh_max_age,
     )
 
@@ -236,8 +237,9 @@ async def logout(
     await TokenService.revoke_all_user_tokens(db, payload.sub)
     
     secure = not settings.DEBUG
-    response.delete_cookie("auth_token", secure=secure, httponly=True, samesite="strict")
-    response.delete_cookie("refresh_token", secure=secure, httponly=True, samesite="strict")
+    samesite = "none" if not settings.DEBUG else "lax"
+    response.delete_cookie("auth_token", secure=secure, httponly=True, samesite=samesite)
+    response.delete_cookie("refresh_token", secure=secure, httponly=True, samesite=samesite)
     
     return MessageResponse(message="Uğurla çıxış edildi")
 

@@ -19,9 +19,11 @@ from app.routers import admin, auth, auth_canva, chat, content, customer
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Development-də cədvəlləri yaradırıq (Alembic işə salınana qədər)
-    if "sqlite" in settings.DATABASE_URL:
-        await create_tables()
+    try:
+        if "sqlite" in settings.DATABASE_URL:
+            await create_tables()
+    except Exception as e:
+        print(f"Database init warning: {e}")
     yield
 
 

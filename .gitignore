@@ -23,6 +23,7 @@ build/
 # Secrets / API keys
 *.txt
 !README.md
+!requirements.txt
 
 # Logs
 *.log

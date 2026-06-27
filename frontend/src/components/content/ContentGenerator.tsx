@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import type { ContentGenerateRequest, GeneratedContent } from '@/types';
-
-const LANGUAGES = [
-  'English', 'Azərbaycan dili', 'Türkçe', 'Русский', 'العربية',
-  'Deutsch', 'Français', 'Español', 'Italiano', 'Português',
-];
+import { LANGUAGES } from '@/lib/languages';
+import { useLanguageStore } from '@/store/languageStore';
 
 export function ContentGenerator() {
-  const [language, setLanguage] = useState('English');
+  const appLanguage = useLanguageStore(s => s.language);
+  const [language, setLanguage] = useState(appLanguage);
   const [productServiceTopic, setProductServiceTopic] = useState('');
   const [brandName, setBrandName] = useState('');
   const [keyFeatures, setKeyFeatures] = useState('');
@@ -139,7 +137,7 @@ export function ContentGenerator() {
               className="w-full px-4 py-3 bg-brand-ivory border border-brand-gray rounded-xl text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent"
             >
               {LANGUAGES.map((lang) => (
-                <option key={lang} value={lang}>{lang}</option>
+                <option key={lang.code} value={lang.label}>{lang.flag} {lang.label}</option>
               ))}
             </select>
           </div>

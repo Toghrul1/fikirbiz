@@ -1,6 +1,10 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { useLanguageStore } from '@/store/languageStore';
 
 function App() {
+  const { language, setLanguage } = useLanguageStore();
+
   return (
     <div className="min-h-screen bg-brand-ivory font-sans text-brand-navy">
       <div
@@ -11,7 +15,12 @@ function App() {
           backgroundRepeat: 'repeat',
         }}
       />
-      <Outlet />
+      <header className="relative z-20 flex items-center justify-end p-4">
+        <LanguageSwitcher value={language} onChange={setLanguage} />
+      </header>
+      <div className="relative z-10">
+        <Outlet />
+      </div>
     </div>
   )
 }

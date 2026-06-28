@@ -20,10 +20,11 @@ from app.routers import admin, auth, auth_canva, chat, content, customer
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        if "sqlite" in settings.DATABASE_URL:
-            await create_tables()
+        await create_tables()
+        print("Database tables created successfully")
     except Exception as e:
         print(f"Database init warning: {e}")
+
     yield
 
 

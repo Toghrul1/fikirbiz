@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from '@/lib/useTranslation';
 
 export const ForgotPasswordForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,15 +17,13 @@ export const ForgotPasswordForm: React.FC = () => {
 
     try {
       const { axiosInstance } = await import('@/lib/axiosInstance');
-      // Design req: Enumeration qoruması — "Şifrəni unutdum?" axınında e-poçt mövcudluğu 
-      // açıqlanmır (həmişə eyni mesaj qaytarılır)
       const res = await axiosInstance.post('/api/auth/forgot-password', { email });
-      setSuccessMsg(res.data.message || 'Əgər bu e-poçt ünvanı qeydiyyatdadırsa, sıfırlama linki göndəriləcəkdir');
+      setSuccessMsg(res.data.message || t('resetSuccess'));
     } catch (err: any) {
       if (err.response?.status === 429) {
-        setErrorMsg('Çox sayda cəhd. Zəhmət olmasa bir az sonra yenidən cəhd edin.');
+        setErrorMsg(t('tooManyAttempts'));
       } else {
-        setErrorMsg('Gözlənilməz xəta baş verdi.');
+        setErrorMsg(t('unexpectedError'));
       }
     } finally {
       setIsLoading(false);
@@ -34,9 +34,9 @@ export const ForgotPasswordForm: React.FC = () => {
     <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">
       <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md p-8">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-medium text-brand-navy">Şifrəni unutmusunuz?</h2>
+          <h2 className="text-2xl font-medium text-brand-navy">{t('forgotPasswordTitle')}</h2>
           <p className="mt-2 text-sm text-brand-khaki">
-            Narahat olmayın, e-poçt ünvanınızı daxil edin və sizə sıfırlama linki göndərəcəyik.
+            {t('forgotPasswordDesc')}
           </p>
         </div>
 
@@ -49,7 +49,7 @@ export const ForgotPasswordForm: React.FC = () => {
               to="/login"
               className="flex w-full justify-center rounded-md bg-brand-navy px-4 py-2 text-sm font-medium text-brand-white hover:bg-[#162a40] transition-colors"
             >
-              Giriş səhifəsinə qayıt
+              {t('backToLogin')}
             </Link>
           </div>
         ) : (
@@ -62,7 +62,7 @@ export const ForgotPasswordForm: React.FC = () => {
             
             <div>
               <label className="block text-sm font-medium text-brand-navy" htmlFor="email">
-                E-poçt ünvanı
+                {t('email')}
               </label>
               <input
                 id="email"
@@ -82,13 +82,13 @@ export const ForgotPasswordForm: React.FC = () => {
               {isLoading ? (
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand-navy border-t-transparent"></div>
               ) : (
-                'Sıfırlama linki göndər'
+                t('sendResetLink')
               )}
             </button>
             
             <div className="text-center text-sm">
               <Link to="/login" className="font-medium text-brand-navy hover:text-brand-khaki">
-                Geri qayıt
+                {t('backToLogin')}
               </Link>
             </div>
           </form>

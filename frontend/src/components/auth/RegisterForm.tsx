@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { useTranslation } from '@/lib/useTranslation';
 
 export const RegisterForm: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -14,6 +15,7 @@ export const RegisterForm: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<any>({});
   
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,16 +44,16 @@ export const RegisterForm: React.FC = () => {
       navigate('/customer/dashboard', { replace: true });
     } catch (err: any) {
       if (err.message === 'Network Error') {
-        setGlobalError('Şəbəkə xətası. Yenidən cəhd edin.');
+        setGlobalError(t('networkError'));
         setPassword('');
       } else if (err.response?.status === 409) {
         setFieldErrors({ email: err.response.data.detail.message });
       } else if (err.response?.status === 400 && err.response.data.detail.code === 'VALIDATION_ERROR') {
         setFieldErrors({ password: err.response.data.detail.errors });
       } else if (err.response?.status === 429) {
-        setGlobalError('Çox sayda cəhd. Zəhmət olmasa bir az sonra yenidən cəhd edin.');
+        setGlobalError(t('tooManyAttempts'));
       } else {
-        setGlobalError('Gözlənilməz xəta baş verdi.');
+        setGlobalError(t('unexpectedError'));
         setPassword('');
       }
     } finally {
@@ -63,10 +65,10 @@ export const RegisterForm: React.FC = () => {
     if (!fieldErrors.password || !Array.isArray(fieldErrors.password)) return null;
     
     const errMap: Record<string, string> = {
-      TOO_SHORT: "Minimum 8 simvol",
-      NO_UPPERCASE: "Ən azı bir böyük hərf",
-      NO_DIGIT: "Ən azı bir rəqəm",
-      NO_SPECIAL_CHAR: "Ən azı bir xüsusi simvol (!@#$%^&*)"
+      TOO_SHORT: t('tooShort'),
+      NO_UPPERCASE: t('noUppercase'),
+      NO_DIGIT: t('noDigit'),
+      NO_SPECIAL_CHAR: t('noSpecial')
     };
 
     return (
@@ -86,7 +88,7 @@ export const RegisterForm: React.FC = () => {
             <span className="text-brand-navy">Fikir</span>
             <span className="text-brand-gold font-medium">Biz</span>
           </h1>
-          <p className="mt-2 text-sm text-brand-khaki">Qeydiyyat</p>
+          <p className="mt-2 text-sm text-brand-khaki">{t('registerTitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -99,7 +101,7 @@ export const RegisterForm: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-brand-navy" htmlFor="firstName">
-                Ad
+                {t('firstName')}
               </label>
               <input
                 id="firstName"
@@ -113,7 +115,7 @@ export const RegisterForm: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-brand-navy" htmlFor="lastName">
-                Soyad
+                {t('lastName')}
               </label>
               <input
                 id="lastName"
@@ -129,7 +131,7 @@ export const RegisterForm: React.FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-brand-navy" htmlFor="email">
-              E-poçt ünvanı
+              {t('email')}
             </label>
             <input
               id="email"
@@ -147,7 +149,7 @@ export const RegisterForm: React.FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-brand-navy" htmlFor="password">
-              Şifrə
+              {t('password')}
             </label>
             <div className="relative mt-1">
               <input
@@ -163,7 +165,7 @@ export const RegisterForm: React.FC = () => {
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-brand-khaki hover:text-brand-navy"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? 'Gizlət' : 'Göstər'}
+                {showPassword ? t('hidePassword') : t('showPassword')}
               </button>
             </div>
             {renderPasswordErrors()}
@@ -177,15 +179,15 @@ export const RegisterForm: React.FC = () => {
             {isLoading ? (
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand-navy border-t-transparent"></div>
             ) : (
-              'Hesab yarat'
+              t('createAccount')
             )}
           </button>
         </form>
 
         <div className="border-t border-brand-gray bg-brand-ivory/30 p-4 text-center text-sm">
-          Artıq hesabınız var?{' '}
+          {t('hasAccount')}{' '}
           <Link to="/login" className="font-medium text-brand-gold hover:text-[#B8962E]">
-            Daxil olun
+            {t('signInLink')}
           </Link>
         </div>
       </div>

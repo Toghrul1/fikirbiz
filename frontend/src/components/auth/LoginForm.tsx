@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from '@/lib/useTranslation';
 
 interface LoginFormProps {
   variant?: 'customer' | 'admin';
@@ -17,6 +18,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
   
   const { login, redirectAfterLogin } = useAuthStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +27,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
     setIsLoading(true);
 
     try {
-      // Reallıqda axiosInstance istifadə edilərək endpoint-ə sorğu göndərilir
-      // Hələlik mock edirik (authStore-da login funksiyası yox idi, onu mock edək və ya birbaşa axios çağıraq)
       const { axiosInstance } = await import('@/lib/axiosInstance');
       const res = await axiosInstance.post('/api/auth/login', { email, password, remember_me: rememberMe });
       
@@ -49,10 +49,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
       } else if (err.response?.status === 401 || err.response?.status === 403) {
         setError(err.response.data.detail.message);
       } else if (err.message === 'Network Error') {
-        setError('Şəbəkə xətası. Yenidən cəhd edin.');
+        setError(t('networkError'));
         setPassword('');
       } else {
-        setError('Gözlənilməz xəta baş verdi.');
+        setError(t('unexpectedError'));
         setPassword('');
       }
     } finally {
@@ -63,18 +63,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">
       <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md">
-        {/* Header */}
         <div className={`p-6 text-center ${variant === 'admin' ? 'bg-brand-navy' : 'bg-brand-white border-b border-brand-gray'}`}>
           <h1 className="text-3xl font-light">
             <span className={variant === 'admin' ? 'text-brand-white' : 'text-brand-navy'}>Fikir</span>
             <span className="text-brand-gold font-medium">Biz</span>
           </h1>
           {variant === 'admin' && (
-            <div className="mt-2 text-sm text-brand-gold font-medium tracking-widest uppercase">Admin</div>
+            <div className="mt-2 text-sm text-brand-gold font-medium tracking-widest uppercase">{t('adminLabel')}</div>
           )}
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
             <div className="p-3 text-sm text-red-600 bg-red-50 rounded" aria-live="polite">
@@ -84,7 +82,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
 
           <div>
             <label className="block text-sm font-medium text-brand-navy" htmlFor="email">
-              E-poçt ünvanı
+              {t('email')}
             </label>
             <input
               id="email"
@@ -99,7 +97,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
 
           <div>
             <label className="block text-sm font-medium text-brand-navy" htmlFor="password">
-              Şifrə
+              {t('password')}
             </label>
             <div className="relative mt-1">
               <input
@@ -115,9 +113,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
                 type="button"
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-brand-khaki hover:text-brand-navy"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Şifrəni gizlət' : 'Şifrəni göstər'}
+                aria-label={showPassword ? t('hidePassword') : t('showPassword')}
               >
-                {showPassword ? 'Gizlət' : 'Göstər'}
+                {showPassword ? t('hidePassword') : t('showPassword')}
               </button>
             </div>
           </div>
@@ -132,13 +130,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
               <label htmlFor="remember_me" className="ml-2 block text-sm text-brand-navy">
-                Məni xatırla
+                {t('rememberMe')}
               </label>
             </div>
             {variant === 'customer' && (
               <div className="text-sm">
                 <Link to="/forgot-password" className="text-brand-khaki hover:text-brand-navy">
-                  Şifrəni unutdum?
+                  {t('forgotPassword')}
                 </Link>
               </div>
             )}
@@ -152,16 +150,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
             {isLoading ? (
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand-navy border-t-transparent"></div>
             ) : (
-              'Daxil ol'
+              t('signIn')
             )}
           </button>
         </form>
         
         {variant === 'customer' && (
           <div className="border-t border-brand-gray bg-brand-ivory/30 p-4 text-center text-sm">
-            Hesabınız yoxdur?{' '}
+            {t('noAccount')}{' '}
             <Link to="/register" className="font-medium text-brand-gold hover:text-[#B8962E]">
-              Qeydiyyatdan keçin
+              {t('signUp')}
             </Link>
           </div>
         )}

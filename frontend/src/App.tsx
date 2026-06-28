@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useLanguageStore } from '@/store/languageStore';
 import { useAuthStore } from '@/store/authStore';
+import { useTranslation } from '@/lib/useTranslation';
 
 function App() {
   const { language, setLanguage } = useLanguageStore();
   const logout = useAuthStore(s => s.logout);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     await logout();
@@ -33,7 +35,7 @@ function App() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          <span className="hidden sm:inline">Logout</span>
+          <span className="hidden sm:inline">{t('logout')}</span>
         </button>
       </header>
       <div className="relative z-10">

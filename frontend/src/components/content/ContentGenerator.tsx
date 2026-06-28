@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ContentGenerateRequest, GeneratedContent } from '@/types';
 import { LANGUAGES } from '@/lib/languages';
 import { useLanguageStore } from '@/store/languageStore';
+import { useTranslation } from '@/lib/useTranslation';
 
 export function ContentGenerator() {
   const appLanguage = useLanguageStore(s => s.language);
@@ -16,6 +17,7 @@ export function ContentGenerator() {
   const [error, setError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'post' | 'reels'>('post');
+  const { t } = useTranslation();
 
   const handleGenerate = async () => {
     if (!productServiceTopic.trim()) return;
@@ -87,7 +89,7 @@ export function ContentGenerator() {
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : t('unexpectedError'));
     } finally {
       setIsLoading(false);
     }
@@ -116,10 +118,10 @@ export function ContentGenerator() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-brand-navy mb-2">
-            💡 FikirBiz Basic
+            💡 {t('contentTitle')}
           </h1>
           <p className="text-brand-khaki">
-            Generate professional Instagram posts & Reels content in seconds.
+            {t('contentDesc')}
           </p>
         </div>
 
@@ -129,7 +131,7 @@ export function ContentGenerator() {
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-brand-gold">🌐</span>
-              <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">Language</span>
+              <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">{t('language')}</span>
             </div>
             <select
               value={language}
@@ -146,13 +148,13 @@ export function ContentGenerator() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <span className="text-brand-gold">📋</span>
-              <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">Product / Service Details</span>
+              <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">{t('productDetails')}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-sm text-brand-khaki mb-1">
-                  Product / Service / Topic <span className="text-red-500">*required</span>
+                  {t('productTopic')} <span className="text-red-500">{t('required')}</span>
                 </label>
                 <input
                   type="text"
@@ -164,7 +166,7 @@ export function ContentGenerator() {
               </div>
               <div>
                 <label className="block text-sm text-brand-khaki mb-1">
-                  Brand Name <span className="text-brand-gray">optional</span>
+                  {t('brandName')} <span className="text-brand-gray">{t('optional')}</span>
                 </label>
                 <input
                   type="text"
@@ -178,7 +180,7 @@ export function ContentGenerator() {
 
             <div className="mb-4">
               <label className="block text-sm text-brand-khaki mb-1">
-                Key Features / Selling Points <span className="text-brand-gray">optional</span>
+                {t('keyFeatures')} <span className="text-brand-gray">{t('optional')}</span>
               </label>
               <textarea
                 value={keyFeatures}
@@ -192,7 +194,7 @@ export function ContentGenerator() {
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm text-brand-khaki mb-1">
-                  Target Audience <span className="text-brand-gray">optional</span>
+                  {t('targetAudience')} <span className="text-brand-gray">{t('optional')}</span>
                 </label>
                 <input
                   type="text"
@@ -204,7 +206,7 @@ export function ContentGenerator() {
               </div>
               <div>
                 <label className="block text-sm text-brand-khaki mb-1">
-                  Call to Action <span className="text-brand-gray">optional</span>
+                  {t('callToAction')} <span className="text-brand-gray">{t('optional')}</span>
                 </label>
                 <input
                   type="text"
@@ -228,10 +230,10 @@ export function ContentGenerator() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Generating...
+                  {t('generating')}
                 </span>
               ) : (
-                '✨ Generate Content'
+                `✨ ${t('generateContent')}`
               )}
             </button>
           </div>
@@ -257,7 +259,7 @@ export function ContentGenerator() {
                     : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray'
                 }`}
               >
-                📸 Instagram Post
+                📸 {t('instagramPost')}
               </button>
               <button
                 onClick={() => setActiveTab('reels')}
@@ -267,7 +269,7 @@ export function ContentGenerator() {
                     : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray'
                 }`}
               >
-                🎬 Instagram Reels
+                🎬 {t('instagramReels')}
               </button>
             </div>
 
@@ -278,7 +280,7 @@ export function ContentGenerator() {
                   onClick={handleCopyAll}
                   className="px-4 py-2 bg-brand-ivory hover:bg-brand-gray text-brand-khaki rounded-lg text-sm font-medium transition-colors"
                 >
-                  {copiedField === `all-${activeTab}` ? '✓ Copied!' : '📋 Copy All'}
+                  {copiedField === `all-${activeTab}` ? `✓ ${t('copied')}` : `📋 ${t('copyAll')}`}
                 </button>
               </div>
 
@@ -288,12 +290,12 @@ export function ContentGenerator() {
                   {/* Caption */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-brand-khaki">Caption</span>
+                      <span className="text-sm font-medium text-brand-khaki">{t('caption')}</span>
                       <button
                         onClick={() => handleCopy(generatedContent.post.caption, 'post-caption')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
                       >
-                        {copiedField === 'post-caption' ? '✓ Copied!' : 'Copy'}
+                        {copiedField === 'post-caption' ? `✓ ${t('copied')}` : t('copy')}
                       </button>
                     </div>
                     <div className="p-4 bg-brand-ivory rounded-xl text-brand-navy whitespace-pre-wrap">
@@ -304,12 +306,12 @@ export function ContentGenerator() {
                   {/* Hashtags */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-brand-khaki">Hashtags</span>
+                      <span className="text-sm font-medium text-brand-khaki">{t('hashtags')}</span>
                       <button
                         onClick={() => handleCopy(generatedContent.post.hashtags.map(h => `#${h}`).join(' '), 'post-hashtags')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
                       >
-                        {copiedField === 'post-hashtags' ? '✓ Copied!' : 'Copy'}
+                        {copiedField === 'post-hashtags' ? `✓ ${t('copied')}` : t('copy')}
                       </button>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -332,12 +334,12 @@ export function ContentGenerator() {
                   {/* Script */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-brand-khaki">🎬 Reels Script</span>
+                      <span className="text-sm font-medium text-brand-khaki">🎬 {t('reelsScript')}</span>
                       <button
                         onClick={() => handleCopy(generatedContent.reels.script, 'reels-script')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
                       >
-                        {copiedField === 'reels-script' ? '✓ Copied!' : 'Copy'}
+                        {copiedField === 'reels-script' ? `✓ ${t('copied')}` : t('copy')}
                       </button>
                     </div>
                     <div className="p-4 bg-brand-ivory rounded-xl text-brand-navy whitespace-pre-wrap">
@@ -348,12 +350,12 @@ export function ContentGenerator() {
                   {/* Caption */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-brand-khaki">Caption</span>
+                      <span className="text-sm font-medium text-brand-khaki">{t('caption')}</span>
                       <button
                         onClick={() => handleCopy(generatedContent.reels.caption, 'reels-caption')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
                       >
-                        {copiedField === 'reels-caption' ? '✓ Copied!' : 'Copy'}
+                        {copiedField === 'reels-caption' ? `✓ ${t('copied')}` : t('copy')}
                       </button>
                     </div>
                     <div className="p-4 bg-brand-ivory rounded-xl text-brand-navy whitespace-pre-wrap">
@@ -364,12 +366,12 @@ export function ContentGenerator() {
                   {/* Hashtags */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-brand-khaki">Hashtags</span>
+                      <span className="text-sm font-medium text-brand-khaki">{t('hashtags')}</span>
                       <button
                         onClick={() => handleCopy(generatedContent.reels.hashtags.map(h => `#${h}`).join(' '), 'reels-hashtags')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
                       >
-                        {copiedField === 'reels-hashtags' ? '✓ Copied!' : 'Copy'}
+                        {copiedField === 'reels-hashtags' ? `✓ ${t('copied')}` : t('copy')}
                       </button>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -391,7 +393,7 @@ export function ContentGenerator() {
 
         {/* Footer */}
         <p className="text-center text-xs text-brand-khaki mt-6">
-          Powered by Mistral AI. API key stored securely as a server secret.
+          {t('poweredBy')}
         </p>
       </div>
     </div>

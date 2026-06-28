@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from '@/lib/useTranslation';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { useLanguageStore } from '@/store/languageStore';
 
 interface LoginFormProps {
   variant?: 'customer' | 'admin';
@@ -19,6 +21,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
   const { login, redirectAfterLogin } = useAuthStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { language, setLanguage } = useLanguageStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +65,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher value={language} onChange={setLanguage} />
+      </div>
       <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md">
         <div className={`p-6 text-center ${variant === 'admin' ? 'bg-brand-navy' : 'bg-brand-white border-b border-brand-gray'}`}>
           <h1 className="text-3xl font-light">

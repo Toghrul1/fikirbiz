@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from '@/lib/useTranslation';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { useLanguageStore } from '@/store/languageStore';
 
 export const ResetPasswordForm: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { language, setLanguage } = useLanguageStore();
   
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -66,6 +69,9 @@ export const ResetPasswordForm: React.FC = () => {
   if (isValidatingToken) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-brand-ivory">
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher value={language} onChange={setLanguage} />
+        </div>
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-brand-gold border-t-transparent"></div>
       </div>
     );
@@ -74,6 +80,9 @@ export const ResetPasswordForm: React.FC = () => {
   if (!isTokenValid) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher value={language} onChange={setLanguage} />
+        </div>
         <div className="w-full max-w-md rounded-lg bg-brand-white shadow-md p-8 text-center space-y-6">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -95,6 +104,9 @@ export const ResetPasswordForm: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher value={language} onChange={setLanguage} />
+      </div>
       <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md p-8">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-medium text-brand-navy">{t('resetPasswordTitle')}</h2>

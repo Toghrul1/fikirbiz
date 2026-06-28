@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '@/lib/useTranslation';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { useLanguageStore } from '@/store/languageStore';
 
 export const ForgotPasswordForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +10,7 @@ export const ForgotPasswordForm: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { t } = useTranslation();
+  const { language, setLanguage } = useLanguageStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +35,9 @@ export const ForgotPasswordForm: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher value={language} onChange={setLanguage} />
+      </div>
       <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md p-8">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-medium text-brand-navy">{t('forgotPasswordTitle')}</h2>

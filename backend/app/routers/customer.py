@@ -22,6 +22,7 @@ from app.schemas import (
 )
 from app.services.password_service import PasswordService
 from app.services.token_service import TokenService
+from app.services.canva_service import get_connection_status
 
 router = APIRouter(
     prefix="/api/customer",
@@ -33,17 +34,19 @@ router = APIRouter(
 @router.get("/profile", response_model=CustomerProfile)
 async def get_profile(
     user: Annotated[User, Depends(get_current_active_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Müştəri profil məlumatları."""
-    # Placeholder for Canva Status and Chat Sessions
-    # Hələlik bu sistemlərdən asılıdır, bu səbəbdən 0 / disconnected qaytarırıq.
+    canva_status_data = await get_connection_status(user.id, db)
+    canva_status = "connected" if canva_status_data else "disconnected"
+
     return CustomerProfile(
         id=user.id,
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,
         registered_at=user.created_at,
-        canva_connector_status="disconnected",
+        canva_connector_status=canva_status,
         active_chat_session_count=0,
     )
 

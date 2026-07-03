@@ -121,16 +121,6 @@ class ChatRequest(BaseModel):
     canva_access_token: Optional[str] = None
 
 
-class CanvaTokenRequest(BaseModel):
-    code: str
-    code_verifier: str
-    redirect_uri: str
-
-
-class CanvaRefreshRequest(BaseModel):
-    refresh_token: str
-
-
 # ─── Content Generator Schemas ──────────────────────────────────────
 
 class ContentGenerateRequest(BaseModel):

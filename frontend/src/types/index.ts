@@ -40,8 +40,32 @@ export type CanvaContentType =
 export interface CanvaDesignLink {
   designId: string;
   editUrl: string;
+  viewUrl?: string;
   contentType: CanvaContentType;
   title?: string;
+  thumbnailUrl?: string;
+  createdAt?: number;
+}
+
+export interface CanvaDesign {
+  id: string;
+  title: string;
+  editUrl: string;
+  viewUrl: string;
+  thumbnailUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CanvaDesignListResponse {
+  items: CanvaDesign[];
+  continuation?: string;
+}
+
+export interface CanvaExportJob {
+  jobId: string;
+  status: 'in_progress' | 'success' | 'failed';
+  urls?: string[];
 }
 
 export interface Message {
@@ -72,9 +96,7 @@ export interface CanvaConnectorState {
   status: ConnectorStatus;
   lastUpdated: number;
   errorMessage?: string;
-  accessToken?: string;
-  refreshToken?: string;
-  tokenExpiresAt?: number;
+  canvaUsername?: string;
 }
 
 export interface VoiceInputState {
@@ -84,6 +106,18 @@ export interface VoiceInputState {
   interimTranscript: string;
   errorCount: number;
   status: 'idle' | 'requesting_permission' | 'recording' | 'error' | 'unsupported';
+}
+
+// --- Toast Types ---
+
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+export interface Toast {
+  id: string;
+  type: ToastType;
+  title: string;
+  message?: string;
+  duration?: number;
 }
 
 // --- Content Generator Types ---
@@ -111,4 +145,34 @@ export interface InstagramReels {
 export interface GeneratedContent {
   post: InstagramPost;
   reels: InstagramReels;
+}
+
+// --- App Store Types ---
+
+export interface AppState {
+  sessions: Session[];
+  activeSessionId: string | null;
+  currentMessages: Message[];
+  isLoading: boolean;
+  sidebarOpen: boolean;
+  connector: CanvaConnectorState;
+  voice: VoiceInputState;
+  toasts: Toast[];
+  designs: CanvaDesign[];
+  designsLoading: boolean;
+  sendMessage: (prompt: string) => Promise<void>;
+  loadSession: (sessionId: string) => Promise<void>;
+  createNewSession: () => void;
+  deleteSession: (sessionId: string) => void;
+  toggleSidebar: () => void;
+  startVoiceInput: () => void;
+  stopVoiceInput: () => void;
+  initiateCanvaAuth: () => Promise<void>;
+  disconnectCanva: () => Promise<void>;
+  checkCanvaStatus: () => Promise<void>;
+  addToast: (toast: Omit<Toast, 'id'>) => void;
+  removeToast: (id: string) => void;
+  loadDesigns: () => Promise<void>;
+  exportDesign: (designId: string, format: string) => Promise<CanvaExportJob | null>;
+  deleteDesign: (designId: string) => Promise<void>;
 }

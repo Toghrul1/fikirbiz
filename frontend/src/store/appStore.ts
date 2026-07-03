@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AppState, Message, Session, CanvaConnectorState, VoiceInputState, CanvaDesignLink } from '@/types';
+import { AppState, Message, Session, CanvaDesignLink, CanvaDesign, Toast } from '@/types';
 import { axiosInstance } from '@/lib/axiosInstance';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -26,8 +26,104 @@ export const useAppStore = create<AppState>((set, get) => ({
     status: 'idle',
   },
 
+  toasts: [],
+  designs: [],
+  designsLoading: false,
+
+  // Toast actions
+  addToast: (toast) => {
+    const id = Date.now().toString();
+    set((state) => ({
+      toasts: [...state.toasts, { ...toast, id }],
+    }));
+  },
+
+  removeToast: (id) => {
+    set((state) => ({
+      toasts: state.toasts.filter((t) => t.id !== id),
+    }));
+  },
+
+  // Design actions
+  loadDesigns: async () => {
+    set({ designsLoading: true });
+    try {
+      const response = await axiosInstance.get('/api/canva/designs', {
+        params: { limit: 20 },
+      });
+      set({ designs: response.data.items || [] });
+    } catch (error) {
+      console.error('Load designs error:', error);
+      get().addToast({
+        type: 'error',
+        title: 'Dizaynlar yüklənə bilmədi',
+      });
+    } finally {
+      set({ designsLoading: false });
+    }
+  },
+
+  exportDesign: async (designId, format) => {
+    try {
+      get().addToast({
+        type: 'info',
+        title: 'İxrac başlayır...',
+        duration: 3000,
+      });
+
+      const response = await axiosInstance.post(`/api/canva/designs/${designId}/export`, {
+        format,
+      });
+
+      const job = response.data;
+
+      // Poll for completion
+      if (job.status === 'in_progress') {
+        let attempts = 0;
+        const maxAttempts = 30;
+
+        while (attempts < maxAttempts) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          attempts++;
+
+          const statusResponse = await axiosInstance.get(`/api/canva/exports/${job.job_id}`);
+          const statusJob = statusResponse.data;
+
+          if (statusJob.status === 'success') {
+            return statusJob;
+          } else if (statusJob.status === 'failed') {
+            get().addToast({
+              type: 'error',
+              title: 'İxrac uğursuz oldu',
+            });
+            return null;
+          }
+        }
+      }
+
+      return job;
+    } catch (error) {
+      console.error('Export design error:', error);
+      get().addToast({
+        type: 'error',
+        title: 'İxrac xətası',
+        message: 'Dizaynı ixrac etmək mümkün olmadı',
+      });
+      return null;
+    }
+  },
+
+  deleteDesign: async (designId) => {
+    // Canva API doesn't support design deletion
+    get().addToast({
+      type: 'warning',
+      title: 'Silinmə dəstəklənmir',
+      message: 'Dizaynları Canva interfeysindən silmək lazımdır',
+    });
+  },
+
   sendMessage: async (prompt: string) => {
-    const { activeSessionId, currentMessages, connector } = get();
+    const { activeSessionId, currentMessages } = get();
     if (!prompt.trim() || !activeSessionId) return;
 
     set({ isLoading: true });
@@ -61,7 +157,6 @@ export const useAppStore = create<AppState>((set, get) => ({
           prompt,
           session_id: activeSessionId,
           message_history: currentMessages.map(m => ({ role: m.role, content: m.content })),
-          canva_access_token: connector.status === 'connected' ? connector.accessToken : null,
         }),
       });
 
@@ -102,8 +197,11 @@ export const useAppStore = create<AppState>((set, get) => ({
               const link: CanvaDesignLink = {
                 designId: parsed.data.designId,
                 editUrl: parsed.data.editUrl,
+                viewUrl: parsed.data.viewUrl,
                 contentType: parsed.data.contentType,
                 title: parsed.data.title,
+                thumbnailUrl: parsed.data.thumbnailUrl,
+                createdAt: parsed.data.createdAt,
               };
               updated.canvaLinks = [...(updated.canvaLinks || []), link];
             } else if (parsed.type === 'error') {
@@ -139,7 +237,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   loadSession: async (sessionId: string) => {
-    // LocalStorage-dən yüklənməli
     const savedMsg = localStorage.getItem(`session_${sessionId}`);
     set({
       activeSessionId: sessionId,
@@ -180,22 +277,49 @@ export const useAppStore = create<AppState>((set, get) => ({
   
   initiateCanvaAuth: async () => {
     set((state) => ({ connector: { ...state.connector, status: 'connecting' } }));
-    setTimeout(() => {
-      // Mock OAuth Flow success
-      set((state) => ({ 
-        connector: { 
-          ...state.connector, 
-          status: 'connected', 
-          accessToken: 'mock', 
-          lastUpdated: Date.now() 
-        } 
-      }));
-    }, 2000);
+    window.location.href = `${API_BASE}/api/auth/canva/login`;
   },
   
-  disconnectCanva: () => {
-    set((state) => ({ 
-      connector: { ...state.connector, status: 'disconnected', accessToken: undefined, lastUpdated: Date.now() } 
-    }));
+  disconnectCanva: async () => {
+    try {
+      await axiosInstance.post('/api/auth/canva/disconnect');
+      set((state) => ({ 
+        connector: { ...state.connector, status: 'disconnected', canvaUsername: undefined, lastUpdated: Date.now() } 
+      }));
+      get().addToast({
+        type: 'success',
+        title: 'Canva bağlantısı kəsildi',
+      });
+    } catch (error) {
+      console.error('Canva disconnect error:', error);
+      get().addToast({
+        type: 'error',
+        title: 'Bağlantı kəsilə bilmədi',
+      });
+    }
+  },
+
+  checkCanvaStatus: async () => {
+    try {
+      const response = await axiosInstance.get('/api/auth/canva/status');
+      const data = response.data;
+      set((state) => ({
+        connector: {
+          ...state.connector,
+          status: data.connected ? 'connected' : 'disconnected',
+          canvaUsername: data.canva_username,
+          lastUpdated: Date.now(),
+        },
+      }));
+
+      // Load designs if connected
+      if (data.connected) {
+        get().loadDesigns();
+      }
+    } catch {
+      set((state) => ({
+        connector: { ...state.connector, status: 'disconnected', lastUpdated: Date.now() },
+      }));
+    }
   },
 }));

@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     # Canva OAuth
     CANVA_CLIENT_ID: Optional[str] = None
     CANVA_CLIENT_SECRET: Optional[str] = None
-    CANVA_REDIRECT_URI: str = "http://localhost:5173/auth/canva/callback"
+    CANVA_REDIRECT_URI: str = "http://localhost:8000/api/auth/canva/callback"
 
     # Mistral AI
     MISTRAL_API_KEY: Optional[str] = None

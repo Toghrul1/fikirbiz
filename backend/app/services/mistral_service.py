@@ -1,10 +1,11 @@
 """
 FikirBiz Backend — Mistral AI Service.
 
-Mistral Large ilə real-time streaming chat və function calling.
+Mistral Large ilə real-time streaming chat və Canva dizayn yaratma.
 """
 
 import json
+import uuid
 from typing import AsyncGenerator
 
 from mistralai.client import Mistral
@@ -28,16 +29,17 @@ Sən istifadəçilərə Canva-da dizayn yaratmaqda kömək edirsən.
 - Azərbaycan dilində cavab ver.
 - Qısa və aydın cavablar ver.
 - Əgər istifadəçi dizayn yaratmaq istəyirsə, create_canva_design tool-unu istifadə et.
-- Dizayn növləri: DESIGN, PRESENTATION, SOCIAL_MEDIA, POSTER, BANNER
+- Dizayn növləri: doc, email, presentation, whiteboard
 - İstifadəçiyə həmişə dizayn yaratmağı təklif et, əgər prompt dizaynla bağlıdırsa.
 - Professional və yaradıcı ol.
 
 Canva dizayn növləri:
-- DESIGN: Ümumi dizayn (poster, flyer, və s.)
-- PRESENTATION: Təqdimat slides
-- SOCIAL_MEDIA: Sosial media postu (Instagram, Facebook, Twitter)
-- POSTER: Poster
-- BANNER: Web banner, reklam banneri
+- doc: Sənəd (Canva Docs)
+- email: E-poçt kampaniyası
+- presentation: Təqdimat slides
+- whiteboard: Ağ lövhə
+
+Dizayn yaratdıqdan sonra istifadəçiyə dizayn linkini təqdim et.
 """
 
 CANVA_DESIGN_TOOL = Tool(
@@ -48,20 +50,31 @@ CANVA_DESIGN_TOOL = Tool(
         parameters={
             "type": "object",
             "properties": {
-                "content_type": {
+                "design_type": {
                     "type": "string",
-                    "enum": ["DESIGN", "PRESENTATION", "SOCIAL_MEDIA", "POSTER", "BANNER"],
+                    "enum": ["doc", "email", "presentation", "whiteboard"],
                     "description": "Dizayn növü",
                 },
-                "topic": {
+                "title": {
                     "type": "string",
-                    "description": "Dizaynın mövzusu və ya başlığı",
+                    "description": "Dizaynın başlığı",
                 },
             },
-            "required": ["content_type", "topic"],
+            "required": ["design_type", "title"],
         },
     ),
 )
+
+
+def _sse_event(event_type: str, data) -> str:
+    """SSE formatında event yaradır."""
+    payload = json.dumps({"type": event_type, "data": data}, ensure_ascii=False)
+    return f"data: {payload}\n\n"
+
+
+def _sse_done() -> str:
+    """SSE bitiş siqnalı."""
+    return "data: [DONE]\n\n"
 
 
 class MistralService:
@@ -90,6 +103,7 @@ class MistralService:
         prompt: str,
         message_history: list[dict] = None,
         has_canva: bool = False,
+        create_design_fn=None,
     ) -> AsyncGenerator[str, None]:
         """
         Mistral API-yə sorğu göndərir və SSE formatında streaming qaytarır.
@@ -159,22 +173,40 @@ class MistralService:
                             if tc_data["name"] == "create_canva_design":
                                 try:
                                     args = json.loads(tc_data["arguments"])
-                                    content_type = args.get("content_type", "DESIGN")
-                                    topic = args.get("topic", prompt[:50])
+                                    design_type = args.get("design_type", "doc")
+                                    title = args.get("title", prompt[:50])
 
-                                    # Mock Canva design URL
-                                    import uuid
-                                    design_id = str(uuid.uuid4())[:8]
-                                    design_url = {
-                                        "designId": design_id,
-                                        "editUrl": f"https://canva.com/design/{design_id}/edit",
-                                        "contentType": content_type,
-                                        "title": topic,
-                                    }
-                                    yield _sse_event("design_url", design_url)
-
-                                    # Tool message backend-ə qaytarılır (agent loop)
-                                    yield _sse_event("text", f"\n\nCanva-da \"{topic}\" mövzusunda {content_type.lower()} dizaynı yaradıldı. Dizaynı redaktə etmək üçün linkə keçin.")
+                                    # Backend ilə real Canva dizaynı yarat
+                                    if create_design_fn:
+                                        try:
+                                            design = await create_design_fn(
+                                                design_type=design_type,
+                                                title=title,
+                                            )
+                                            design_url = {
+                                                "designId": design.id,
+                                                "editUrl": design.edit_url,
+                                                "viewUrl": design.view_url,
+                                                "contentType": design_type.upper(),
+                                                "title": title,
+                                                "thumbnailUrl": design.thumbnail_url,
+                                                "createdAt": design.created_at,
+                                            }
+                                            yield _sse_event("design_url", design_url)
+                                            yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün yuxarıdakı linkə keçin.")
+                                        except Exception as e:
+                                            yield _sse_event("error", f"Canva dizaynı yaradıla bilmədi: {str(e)}")
+                                    else:
+                                        # Fallback: mock dizayn
+                                        design_id = str(uuid.uuid4())[:8]
+                                        design_url = {
+                                            "designId": design_id,
+                                            "editUrl": f"https://canva.com/design/{design_id}/edit",
+                                            "contentType": design_type.upper(),
+                                            "title": title,
+                                        }
+                                        yield _sse_event("design_url", design_url)
+                                        yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün linkə keçin.")
 
                                 except json.JSONDecodeError:
                                     yield _sse_event("error", "Dizayn parametrlərini oxumaq mümkün olmadı.")
@@ -184,14 +216,3 @@ class MistralService:
         except Exception as e:
             yield _sse_event("error", f"Süni intellekt xətası: {str(e)}")
             yield _sse_done()
-
-
-def _sse_event(event_type: str, data) -> str:
-    """SSE formatında event yaradır."""
-    payload = json.dumps({"type": event_type, "data": data}, ensure_ascii=False)
-    return f"data: {payload}\n\n"
-
-
-def _sse_done() -> str:
-    """SSE bitiş siqnalı."""
-    return "data: [DONE]\n\n"

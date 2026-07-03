@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
+import { CanvaLogo, CanvaPoweredBy } from '../canva/CanvaLogo';
 
 export const Sidebar: React.FC = () => {
   const { 
@@ -13,10 +14,17 @@ export const Sidebar: React.FC = () => {
     toggleSidebar,
     connector,
     initiateCanvaAuth,
-    disconnectCanva
+    disconnectCanva,
+    checkCanvaStatus,
+    designs,
+    designsLoading,
   } = useAppStore();
   
   const { logout, user } = useAuthStore();
+
+  useEffect(() => {
+    checkCanvaStatus();
+  }, [checkCanvaStatus]);
 
   const handleCanvaToggle = () => {
     if (connector.status === 'connected') {
@@ -36,7 +44,7 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      {/* Sidebar sidebarOpen */}
+      {/* Sidebar */}
       <aside 
         className={`fixed inset-y-0 left-0 z-30 flex w-72 flex-col bg-brand-navy text-brand-white transition-transform duration-300 md:static md:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -112,26 +120,47 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
 
-        {/* Canva Status */}
+        {/* Canva Section */}
         <div className="p-4 border-t border-white/10">
+          {/* Canva Brand Header */}
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium">Canva İnteqrasiyası</span>
+            <CanvaLogo size="sm" className="text-brand-white" />
             <div className={`h-2.5 w-2.5 rounded-full ${
               connector.status === 'connected' ? 'bg-green-500' :
               connector.status === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-brand-gray/50'
             }`} />
           </div>
+
+          {/* Connection Status */}
+          {connector.status === 'connected' && connector.canvaUsername && (
+            <div className="mb-2 text-xs text-green-400">
+              Bağlı: {connector.canvaUsername}
+            </div>
+          )}
+
+          {/* Design Count */}
+          {connector.status === 'connected' && designs.length > 0 && (
+            <div className="mb-2 text-xs text-brand-gray/70">
+              {designs.length} dizayn mövcuddur
+            </div>
+          )}
+
+          {/* Connect/Disconnect Button */}
           <button
             onClick={handleCanvaToggle}
+            disabled={connector.status === 'connecting'}
             className={`w-full py-2 text-sm font-medium rounded-lg transition-colors ${
               connector.status === 'connected' 
                 ? 'bg-white/10 text-brand-white hover:bg-white/20' 
                 : 'bg-brand-gold text-brand-navy hover:bg-[#B8962E]'
-            }`}
+            } ${connector.status === 'connecting' ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {connector.status === 'connected' ? 'Bağlantını Kəs' : 
              connector.status === 'connecting' ? 'Qoşulur...' : 'Canva ilə Bağlan'}
           </button>
+
+          {/* Powered by Canva */}
+          <CanvaPoweredBy className="mt-3 justify-center" />
         </div>
 
         {/* User Profile */}

@@ -3,9 +3,10 @@ import { Sidebar } from './Sidebar';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { useAppStore } from '@/store/appStore';
+import { ToastContainer } from '../canva/Toast';
 
 export const ChatInterface: React.FC = () => {
-  const { toggleSidebar } = useAppStore();
+  const { toggleSidebar, connector } = useAppStore();
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-brand-ivory font-sans text-brand-navy">
@@ -23,12 +24,22 @@ export const ChatInterface: React.FC = () => {
             </svg>
           </button>
           <div className="ml-2 text-xl font-medium">FikirBiz</div>
+          {/* Canva Status Indicator */}
+          {connector.status === 'connected' && (
+            <div className="ml-auto flex items-center gap-2 text-xs text-green-600">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              Canva bağlı
+            </div>
+          )}
         </header>
 
         {/* Chat Area */}
         <MessageList />
         <MessageInput />
       </main>
+
+      {/* Toast Notifications */}
+      <ToastContainer />
     </div>
   );
 };

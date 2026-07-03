@@ -4,6 +4,7 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
+import { CanvaCallback } from '@/components/auth/CanvaCallback';
 import { CustomerDashboard } from '@/components/customer/CustomerDashboard';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { ContentGenerator } from '@/components/content/ContentGenerator';
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
   {
     path: '/reset-password/:token',
     element: <ResetPasswordForm />,
+  },
+  {
+    path: '/canva/callback',
+    element: <CanvaCallback />,
   },
   {
     path: '/customer/*',

@@ -9,6 +9,7 @@ import { CustomerDashboard } from '@/components/customer/CustomerDashboard';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { ContentGenerator } from '@/components/content/ContentGenerator';
 import App from '@/App';
+import { ChatInterface } from '@/components/chat/ChatInterface';
 
 export const router = createBrowserRouter([
   {
@@ -53,7 +54,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'chat',
-        element: <div className="p-4">Chat Interface (Tezliklə)</div>,
+        element: <ChatInterface />,
       },
       {
         path: 'content',

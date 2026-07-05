@@ -7,12 +7,6 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-brand-ivory font-sans text-brand-navy flex flex-col">
-      {/* Top Banner */}
-      <div className="bg-brand-navy text-white text-xs py-2 px-6 flex items-center justify-between">
-        <span className="font-semibold tracking-wide">FikirBiz</span>
-        <span className="text-brand-gray/80">Süni intellekt sürəti, İnsan toxunuşu</span>
-      </div>
-
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-brand-gray/20 bg-white/80 backdrop-blur-md sticky top-0 z-20">
         {/* Logo + Social */}

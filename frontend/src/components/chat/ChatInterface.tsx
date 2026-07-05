@@ -12,7 +12,7 @@ export const ChatInterface: React.FC = () => {
     <div className="flex h-screen w-full overflow-hidden bg-[#F5F1EB] font-sans text-brand-navy">
       <Sidebar />
       
-      <main className="flex flex-1 flex-col relative w-full min-w-0 overflow-hidden">
+      <main className="flex flex-1 flex-col relative w-full min-w-0 overflow-hidden md:ml-64">
         {/* Mobile Header */}
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-black/6 bg-white/70 backdrop-blur-md px-4 md:hidden">
           <button 

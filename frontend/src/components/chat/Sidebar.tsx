@@ -45,17 +45,18 @@ export const Sidebar: React.FC = () => {
 
       {/* Sidebar */}
       <aside 
-        className={`fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-brand-navy transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-brand-navy transition-transform duration-300 ease-in-out md:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Header / Logo */}
-        <div className="flex h-14 items-center justify-between px-5 border-b border-white/8">
-          <div className="text-xl font-light text-white tracking-wide">
-            <span>Fikir</span><span className="text-brand-gold font-semibold">Biz</span>
-          </div>
+        {/* Logo */}
+        <div className="flex h-16 items-center gap-3 px-5 border-b border-white/8">
+          <img src="/logo.jpg" alt="FikirBiz" className="h-9 w-auto rounded" />
+          <span className="text-lg font-light text-white tracking-wide">
+            Fikir<span className="text-brand-gold font-semibold">Biz</span>
+          </span>
           <button 
-            className="md:hidden p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+            className="md:hidden ml-auto p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors"
             onClick={toggleSidebar}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">

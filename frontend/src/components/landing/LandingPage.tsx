@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activePlan, setActivePlan] = useState<'basic' | 'pro'>('basic');
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-brand-navy relative z-10 bg-brand-ivory">
@@ -94,16 +93,18 @@ export const LandingPage: React.FC = () => {
 
           {/* Plan Options as CTA */}
           <div className="flex flex-col sm:flex-row items-center gap-5 w-full lg:w-auto">
-            <button
-              onClick={() => setActivePlan('basic')}
-              className={`w-full sm:w-auto px-10 py-4 text-lg font-bold rounded-xl transition-all ${
-                activePlan === 'basic'
-                  ? 'bg-brand-gold text-brand-navy shadow-xl shadow-brand-gold/20 transform scale-105'
-                  : 'bg-brand-navy/5 text-brand-navy border-2 border-transparent hover:border-brand-navy/20 hover:bg-brand-navy/10 hover:-translate-y-1'
-              }`}
-            >
-              FikirBiz Basic
-            </button>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="px-5 py-2.5 text-sm font-medium rounded-md bg-brand-navy/5 text-brand-gray hover:bg-brand-gold hover:text-brand-navy transition-colors"
+                >
+                  FikirBiz Basic
+                </button>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="px-5 py-2.5 text-sm font-medium rounded-md bg-brand-navy/5 text-brand-gray hover:bg-brand-gold hover:text-brand-navy transition-colors"
+                >
+                  FikirBiz Pro
+                </button>
             <button
               onClick={() => setActivePlan('pro')}
               className={`w-full sm:w-auto px-10 py-4 text-lg font-bold rounded-xl transition-all ${

@@ -2,18 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '@/store/appStore';
 
 const PROMPT_SUGGESTIONS = [
-  'İnstaqram postu yarat',
+  'İnstaqram postu hazırla',
   'YouTube thumbnail yarat',
   'Təqdimat slides yarat',
   'Facebook reklamı yarat',
-  'Flayer yarat',
+  'Flayer hazırla',
   'CV yarat',
-  'Poster yarat',
+  'Poster hazırla',
   'Biznes kart yarat',
   'LinkedIn banner yarat',
   'Logo yarat',
   'Restoran menyusu yarat',
-  'Dəvətnamə yarat',
+  'Dəvətnamə hazırla',
   'İnfoqrafika yarat',
 ];
 
@@ -27,9 +27,9 @@ export const VoiceButton: React.FC = () => {
         type="button"
         disabled
         title="Səsli daxiletmə dəstəklənmir"
-        className="flex h-10 w-10 items-center justify-center rounded-full text-brand-gray bg-brand-ivory cursor-not-allowed"
+        className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-gray/40 cursor-not-allowed"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
         </svg>
       </button>
@@ -41,16 +41,13 @@ export const VoiceButton: React.FC = () => {
       stopVoiceInput();
       return;
     }
-
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
       setPermissionError(false);
       startVoiceInput();
-      
       setTimeout(() => {
         stopVoiceInput();
       }, 3000);
-      
     } catch (err) {
       setPermissionError(true);
       console.error("Mikrofon icazəsi rədd edildi", err);
@@ -61,16 +58,16 @@ export const VoiceButton: React.FC = () => {
     <button
       type="button"
       onClick={handleToggle}
-      className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+      className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
         voice.isRecording 
-          ? 'bg-red-100 text-red-600 animate-pulse' 
+          ? 'bg-red-100 text-red-500 animate-pulse' 
           : permissionError 
             ? 'bg-red-50 text-red-400'
-            : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gold/20 hover:text-brand-navy'
+            : 'text-brand-khaki hover:bg-brand-navy/5 hover:text-brand-navy'
       }`}
       title={permissionError ? "Mikrofon icazəsi yoxdur" : voice.isRecording ? "Dayandır" : "Səslə daxil et"}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" fill={voice.isRecording ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+      <svg xmlns="http://www.w3.org/2000/svg" fill={voice.isRecording ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
       </svg>
     </button>
@@ -86,7 +83,7 @@ export const MessageInput: React.FC = () => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`;
     }
   };
 
@@ -97,7 +94,6 @@ export const MessageInput: React.FC = () => {
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!input.trim() || isLoading || !activeSessionId) return;
-    
     sendMessage(input.trim());
     setInput('');
     if (textareaRef.current) {
@@ -117,75 +113,77 @@ export const MessageInput: React.FC = () => {
     textareaRef.current?.focus();
   };
 
+  const showSuggestions = useAppStore.getState().currentMessages.length === 0;
+
   return (
-    <div className="bg-brand-ivory/80 backdrop-blur-md border-t border-brand-gray/30 p-4 pb-6 md:p-6 sticky bottom-0">
-      <div className="mx-auto max-w-4xl relative">
+    <div className="shrink-0 bg-transparent px-4 pb-5 pt-3 md:px-6">
+      <div className="mx-auto max-w-3xl">
         {/* Prompt Suggestions */}
-        {useAppStore.getState().currentMessages.length === 0 && (
-          <div className="mb-4">
-            <p className="text-xs text-brand-gray mb-2">Sürətli başlanğıclar:</p>
-            <div className="flex flex-wrap gap-2">
-              {PROMPT_SUGGESTIONS.slice(0, 6).map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                  className="px-3 py-1.5 text-xs rounded-full bg-white border border-brand-gray/30 text-brand-navy hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-colors"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
+        {showSuggestions && (
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {PROMPT_SUGGESTIONS.slice(0, 5).map((suggestion) => (
+              <button
+                key={suggestion}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="px-3 py-1.5 text-xs rounded-full bg-white border border-black/8 text-brand-navy/70 hover:bg-brand-gold/10 hover:border-brand-gold/40 hover:text-brand-navy transition-all shadow-sm"
+              >
+                {suggestion}
+              </button>
+            ))}
           </div>
         )}
 
+        {/* Input Box */}
         <form 
           onSubmit={handleSubmit}
-          className="flex items-end gap-2 bg-white rounded-2xl shadow-sm border border-brand-gray/50 p-2 focus-within:border-brand-gold focus-within:ring-1 focus-within:ring-brand-gold transition-all"
+          className="flex items-end gap-2 bg-white rounded-2xl border border-black/8 shadow-md px-3 pt-3 pb-3 focus-within:border-brand-gold/50 focus-within:shadow-lg focus-within:shadow-brand-gold/8 transition-all"
         >
-          <div className="mb-1 ml-1">
-            <VoiceButton />
+          <div className="flex-1 flex items-end gap-2">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={
+                !activeSessionId 
+                  ? "Yeni söhbət başlatmaq üçün sol paneldən + düyməsinə basın"
+                  : connector.status === 'connected'
+                    ? "Dizayn ideyanızı yazın..."
+                    : "Sualınızı yazın..."
+              }
+              className="flex-1 max-h-[160px] min-h-[36px] resize-none bg-transparent text-sm text-brand-navy placeholder:text-brand-gray/60 focus:outline-none leading-relaxed"
+              rows={1}
+              disabled={!activeSessionId || isLoading}
+            />
           </div>
-          
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={
-              !activeSessionId 
-                ? "Zəhmət olmasa yeni söhbət yaradın"
-                : connector.status === 'connected'
-                  ? "Dizayn ideyanızı yazın (məsələn: Gözəl bir instagram postu yarat...)"
-                  : "Canva bağlantısı olmadan da sorğu göndərə bilərsiniz"
-            }
-            className="flex-1 max-h-[200px] min-h-[44px] resize-none bg-transparent py-3 px-2 text-brand-navy placeholder:text-brand-gray focus:outline-none"
-            rows={1}
-            disabled={!activeSessionId || isLoading}
-          />
-          
-          <button
-            type="submit"
-            disabled={!input.trim() || isLoading || !activeSessionId}
-            className="mb-1 mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-navy text-brand-gold hover:bg-[#162a40] disabled:bg-brand-gray disabled:text-white transition-colors"
-          >
-            {isLoading ? (
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand-gold border-t-transparent" />
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 -mt-0.5 ml-0.5">
-                <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
-              </svg>
-            )}
-          </button>
+
+          <div className="flex items-center gap-1.5 shrink-0 pb-0.5">
+            <VoiceButton />
+            <button
+              type="submit"
+              disabled={!input.trim() || isLoading || !activeSessionId}
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-navy text-brand-gold hover:bg-brand-navy/85 disabled:bg-brand-gray/30 disabled:text-white/50 transition-all"
+            >
+              {isLoading ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-gold border-t-transparent" />
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 -mt-px ml-px">
+                  <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
+                </svg>
+              )}
+            </button>
+          </div>
         </form>
 
         {/* Status Bar */}
-        <div className="mt-2 flex items-center justify-between text-xs text-brand-khaki">
-          <span>
+        <div className="mt-2 flex items-center justify-between text-xs text-brand-khaki/60 px-1">
+          <span className="flex items-center gap-1.5">
+            <div className={`h-1.5 w-1.5 rounded-full ${connector.status === 'connected' ? 'bg-green-400' : 'bg-brand-gray/40'}`} />
             {connector.status === 'connected' 
-              ? 'Canva bağlı — dizayn yarada bilərsiniz'
-              : 'Canva bağlı deyil — yalnız mətn söhbəti'}
+              ? 'Canva bağlı' 
+              : 'Canva bağlı deyil'}
           </span>
-          <span>Səsli daxiletmə üçün mikrofona icazə verin</span>
+          <span>Enter — göndər &nbsp;·&nbsp; Shift+Enter — yeni sətir</span>
         </div>
       </div>
     </div>

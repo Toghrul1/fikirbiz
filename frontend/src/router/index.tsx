@@ -10,11 +10,12 @@ import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { ContentGenerator } from '@/components/content/ContentGenerator';
 import App from '@/App';
 import { ChatInterface } from '@/components/chat/ChatInterface';
+import { LandingPage } from '@/components/landing/LandingPage';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/login" replace />,
+    element: <LandingPage />,
   },
   {
     path: '/login',

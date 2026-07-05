@@ -53,21 +53,43 @@ export const LandingPage: React.FC = () => {
         {/* Right Column: Hero Content */}
         <div className="max-w-2xl text-center lg:text-left flex flex-col items-center lg:items-start">
           <div className="mb-10">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-gold/10 text-brand-gold text-sm font-semibold mb-8">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-              </svg>
-              Süni intellekt ilə dizayn yaradın
-            </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-brand-navy mb-8 leading-tight tracking-tight">
-              Fikirlərinizi <br className="hidden lg:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-yellow-500">
-                Canva
-              </span> dizaynlarına çevirin
-            </h1>
-            <p className="text-xl text-brand-khaki max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              FikirBiz AI ilə istənilən dizaynı bir neçə saniyədə yaradın. Canva ilə birləşən güclü süni intellekt köməkçiniz.
-            </p>
+            {activePlan === 'pro' ? (
+              <>
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-gold/10 text-brand-gold text-sm font-semibold mb-8">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                  </svg>
+                  Süni intellekt ilə dizayn hazırlayın
+                </div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-brand-navy mb-8 leading-tight tracking-tight">
+                  Fikirlərinizi <br className="hidden lg:block" />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-yellow-500">
+                    Canva
+                  </span> dizaynlarına çevirin
+                </h1>
+                <p className="text-xl text-brand-khaki max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                  FikirBiz AI ilə istənilən dizaynı bir neçə saniyədə hazırlayın. Canva ilə birləşən güclü süni intellekt köməkçiniz.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-gold/10 text-brand-gold text-sm font-semibold mb-8">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                  </svg>
+                  Süni intellekt ilə SMM xidməti
+                </div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-brand-navy mb-8 leading-tight tracking-tight">
+                  Sosial medianı <br className="hidden lg:block" />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-yellow-500">
+                    Süni İntellektlə
+                  </span> idarə edin
+                </h1>
+                <p className="text-xl text-brand-khaki max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                  FikirBiz AI ilə peşəkar postlar, mətnlər və tam SMM strategiyasını bir neçə saniyədə hazırlayın. Rəqəmsal varlığınızı gücləndirin.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Plan Options as CTA */}

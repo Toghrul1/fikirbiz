@@ -51,7 +51,9 @@ export const Sidebar: React.FC = () => {
       >
         {/* Header / Logo */}
         <div className="flex h-14 items-center justify-between px-5 border-b border-white/8">
-          <img src="/logo.jpg" alt="FikirBiz" className="h-8 w-auto rounded" />
+          <div className="text-xl font-light text-white tracking-wide">
+            <span>Fikir</span><span className="text-brand-gold font-semibold">Biz</span>
+          </div>
           <button 
             className="md:hidden p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors"
             onClick={toggleSidebar}
@@ -175,17 +177,6 @@ export const Sidebar: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
               </svg>
             </button>
-          </div>
-        </div>
-
-        {/* Footer Links */}
-        <div className="px-5 py-3 border-t border-white/8">
-          <div className="flex items-center justify-center gap-3 text-[10px] text-white/30">
-            <a href="/haqqimizda" className="hover:text-brand-gold transition-colors">Haqqımızda</a>
-            <span>|</span>
-            <a href="/mexfilik" className="hover:text-brand-gold transition-colors">Məxfilik</a>
-            <span>|</span>
-            <a href="/faq" className="hover:text-brand-gold transition-colors">FAQ</a>
           </div>
         </div>
       </aside>

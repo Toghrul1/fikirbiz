@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const PROMPT_SUGGESTIONS = [
-  'İnstaqram postu yarat',
-  'YouTube thumbnail yarat',
-  'Təqdimat slides yarat',
-  'Facebook reklamı yarat',
-  'Flayer yarat',
-  'Logo yarat',
-];
-
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const [activePlan, setActivePlan] = useState<'basic' | 'pro'>('basic');
@@ -89,22 +80,6 @@ export const LandingPage: React.FC = () => {
             <p className="text-lg text-brand-khaki max-w-lg mx-auto">
               FikirBiz AI ilə istənilən dizaynı bir neçə saniyədə yaradın. Canva ilə birləşən güclü süni intellekt.
             </p>
-          </div>
-
-          {/* Prompt Suggestions */}
-          <div className="mb-8">
-            <p className="text-sm text-brand-gray mb-3">Sürətli başlanğıclar:</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {PROMPT_SUGGESTIONS.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => navigate('/login')}
-                  className="px-4 py-2 text-sm rounded-full bg-white border border-brand-gray/30 text-brand-navy hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-colors"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* CTA Buttons */}

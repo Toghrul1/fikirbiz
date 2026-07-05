@@ -9,14 +9,14 @@ export const ChatInterface: React.FC = () => {
   const { toggleSidebar, connector } = useAppStore();
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#F5F1EB] font-sans text-brand-navy">
+    <div className="flex h-screen w-full overflow-hidden bg-gradient-to-br from-[#F5F1EB] via-[#EFE7DC] to-[#E8DDD0] font-sans text-brand-navy">
       <Sidebar />
-      
+
       <main className="flex flex-1 flex-col relative w-full min-w-0 overflow-hidden md:ml-64">
         {/* Mobile Header */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-black/6 bg-white/70 backdrop-blur-md px-4 md:hidden">
-          <button 
-            className="p-2 -ml-1.5 rounded-lg text-brand-navy/60 hover:text-brand-navy hover:bg-black/5 transition-colors"
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-black/[0.04] bg-white/60 backdrop-blur-xl px-4 md:hidden">
+          <button
+            className="p-2 -ml-1.5 rounded-xl text-brand-navy/50 hover:text-brand-navy hover:bg-black/5 transition-all duration-200"
             onClick={toggleSidebar}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -28,7 +28,7 @@ export const ChatInterface: React.FC = () => {
           </div>
           {connector.status === 'connected' ? (
             <div className="flex items-center gap-1.5 text-xs text-green-600">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
               Canva
             </div>
           ) : (
@@ -41,7 +41,6 @@ export const ChatInterface: React.FC = () => {
         <MessageInput />
       </main>
 
-      {/* Toast Notifications */}
       <ToastContainer />
     </div>
   );

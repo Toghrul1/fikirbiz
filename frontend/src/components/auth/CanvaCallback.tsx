@@ -12,25 +12,22 @@ export const CanvaCallback: React.FC = () => {
     const error = searchParams.get('canva_error');
 
     if (success === 'true') {
-      // Canva bağlantısı uğurla quruldu, statusu yenilə
       checkCanvaStatus().then(() => {
         navigate('/customer/dashboard', { replace: true });
       });
     } else if (error) {
-      // Xəta baş verdi, dashboard-a qayıt
       console.error('Canva OAuth error:', error);
       navigate('/customer/dashboard', { replace: true });
     } else {
-      // Heç bir parametr yoxdursa, dashboard-a qayıt
       navigate('/customer/dashboard', { replace: true });
     }
   }, [searchParams, navigate, checkCanvaStatus]);
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto mb-4"></div>
-        <p className="text-brand-navy">Canva bağlantısı yoxlanılır...</p>
+    <div className="min-h-screen bg-gradient-to-br from-[#F5F1EB] via-[#EFE7DC] to-[#E8DDD0] flex items-center justify-center">
+      <div className="text-center" role="status" aria-live="polite">
+        <div className="animate-spin rounded-full h-12 w-12 border-[3px] border-brand-gold/20 border-t-brand-gold mx-auto mb-6" />
+        <p className="text-brand-navy font-medium">Canva bağlantısı yoxlanılır...</p>
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ export const LandingPage: React.FC = () => {
               <div className="flex items-start gap-8">
                 {/* Left: Logo + Social */}
                 <div className="flex flex-col items-center gap-4">
-                  <div className="bg-brand-navy rounded-2xl px-8 py-6 flex items-center justify-center">
+                  <div className="bg-brand-navy w-28 h-28 rounded-2xl flex items-center justify-center">
                     <span className="text-2xl font-light text-white">
                       Fikir<span className="text-brand-gold font-medium">Biz</span>
                     </span>

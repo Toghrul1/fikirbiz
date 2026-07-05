@@ -121,7 +121,7 @@ async def canva_callback(
     if not _canva_oauth_session:
         logger.warning("Canva callback: missing OAuth session cookie")
         return RedirectResponse(
-            url=f"{settings.FRONTEND_URL}/customer/dashboard?canva_error=no_session",
+            url=f"{settings.FRONTEND_URL}/customer/chat?canva_error=no_session",
             status_code=status.HTTP_302_FOUND,
         )
 
@@ -130,7 +130,7 @@ async def canva_callback(
     except Exception:
         logger.warning("Canva callback: invalid OAuth session cookie")
         return RedirectResponse(
-            url=f"{settings.FRONTEND_URL}/customer/dashboard?canva_error=invalid_session",
+            url=f"{settings.FRONTEND_URL}/customer/chat?canva_error=invalid_session",
             status_code=status.HTTP_302_FOUND,
         )
 
@@ -143,7 +143,7 @@ async def canva_callback(
             state,
         )
         return RedirectResponse(
-            url=f"{settings.FRONTEND_URL}/customer/dashboard?canva_error=invalid_state",
+            url=f"{settings.FRONTEND_URL}/customer/chat?canva_error=invalid_state",
             status_code=status.HTTP_302_FOUND,
         )
 
@@ -153,13 +153,13 @@ async def canva_callback(
     if not user_id:
         logger.warning("Canva callback: missing user_id in session")
         return RedirectResponse(
-            url=f"{settings.FRONTEND_URL}/customer/dashboard?canva_error=no_user",
+            url=f"{settings.FRONTEND_URL}/customer/chat?canva_error=no_user",
             status_code=status.HTTP_302_FOUND,
         )
 
     # Cookie-ı sil
     response = RedirectResponse(
-        url=f"{settings.FRONTEND_URL}/customer/dashboard?canva_error=token_exchange_failed",
+        url=f"{settings.FRONTEND_URL}/customer/chat?canva_error=token_exchange_failed",
         status_code=status.HTTP_302_FOUND,
     )
     response.delete_cookie(_OAUTH_SESSION_COOKIE)
@@ -179,7 +179,7 @@ async def canva_callback(
 
         # Başarılı message ilə redirect et
         success_response = RedirectResponse(
-            url=f"{settings.FRONTEND_URL}/customer/dashboard?canva_success=true",
+            url=f"{settings.FRONTEND_URL}/customer/chat?canva_success=true",
             status_code=status.HTTP_302_FOUND,
         )
         success_response.delete_cookie(_OAUTH_SESSION_COOKIE)

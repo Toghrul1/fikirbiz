@@ -13,13 +13,13 @@ export const CanvaCallback: React.FC = () => {
 
     if (success === 'true') {
       checkCanvaStatus().then(() => {
-        navigate('/customer/dashboard', { replace: true });
+        navigate('/customer/chat', { replace: true });
       });
     } else if (error) {
       console.error('Canva OAuth error:', error);
-      navigate('/customer/dashboard', { replace: true });
+      navigate('/customer/chat', { replace: true });
     } else {
-      navigate('/customer/dashboard', { replace: true });
+      navigate('/customer/chat', { replace: true });
     }
   }, [searchParams, navigate, checkCanvaStatus]);
 

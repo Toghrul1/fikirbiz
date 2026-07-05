@@ -48,29 +48,6 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Plan Options */}
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={() => setActivePlan('basic')}
-              className={`px-8 py-4 text-base font-bold rounded-xl transition-all w-full sm:w-48 ${
-                activePlan === 'basic'
-                  ? 'bg-brand-gold text-brand-navy shadow-lg transform scale-105'
-                  : 'bg-brand-navy/5 text-brand-navy hover:bg-brand-navy/10 hover:shadow-md'
-              }`}
-            >
-              FikirBiz Basic
-            </button>
-            <button
-              onClick={() => setActivePlan('pro')}
-              className={`px-8 py-4 text-base font-bold rounded-xl transition-all w-full sm:w-48 ${
-                activePlan === 'pro'
-                  ? 'bg-brand-gold text-brand-navy shadow-lg transform scale-105'
-                  : 'bg-brand-navy/5 text-brand-navy hover:bg-brand-navy/10 hover:shadow-md'
-              }`}
-            >
-              FikirBiz Pro
-            </button>
-          </div>
         </div>
 
         {/* Right Column: Hero Content */}
@@ -93,19 +70,27 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          {/* CTA Buttons */}
+          {/* Plan Options as CTA */}
           <div className="flex flex-col sm:flex-row items-center gap-5 w-full lg:w-auto">
             <button
-              onClick={() => navigate('/login')}
-              className="w-full sm:w-auto px-10 py-4 rounded-xl bg-brand-navy text-brand-gold font-bold text-lg hover:bg-brand-navy/90 transition-all shadow-xl shadow-brand-navy/20 hover:-translate-y-1"
+              onClick={() => setActivePlan('basic')}
+              className={`w-full sm:w-auto px-10 py-4 text-lg font-bold rounded-xl transition-all ${
+                activePlan === 'basic'
+                  ? 'bg-brand-gold text-brand-navy shadow-xl shadow-brand-gold/20 transform scale-105'
+                  : 'bg-brand-navy/5 text-brand-navy border-2 border-transparent hover:border-brand-navy/20 hover:bg-brand-navy/10 hover:-translate-y-1'
+              }`}
             >
-              Giriş Edin
+              FikirBiz Basic
             </button>
             <button
-              onClick={() => navigate('/register')}
-              className="w-full sm:w-auto px-10 py-4 rounded-xl border-2 border-brand-navy text-brand-navy font-bold text-lg hover:bg-brand-navy hover:text-brand-gold transition-all shadow-lg shadow-transparent hover:shadow-brand-navy/20 hover:-translate-y-1 bg-transparent hover:border-brand-navy"
+              onClick={() => setActivePlan('pro')}
+              className={`w-full sm:w-auto px-10 py-4 text-lg font-bold rounded-xl transition-all ${
+                activePlan === 'pro'
+                  ? 'bg-brand-gold text-brand-navy shadow-xl shadow-brand-gold/20 transform scale-105'
+                  : 'bg-brand-navy/5 text-brand-navy border-2 border-transparent hover:border-brand-navy/20 hover:bg-brand-navy/10 hover:-translate-y-1'
+              }`}
             >
-              Qeydiyyatdan Keçin
+              FikirBiz Pro
             </button>
           </div>
         </div>

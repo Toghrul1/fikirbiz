@@ -24,7 +24,7 @@ export const LandingPage: React.FC = () => {
             <img src="/logo.jpg" alt="FikirBiz" className="w-32 lg:w-40 h-auto rounded-2xl shadow-lg transition-transform hover:scale-105" />
             <div className="flex items-center gap-4">
               <a
-                href="https://instagram.com/fikirbiz"
+                href="https://instagram.com/fikir_biz"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-navy/5 text-brand-navy hover:bg-[#E4405F] hover:text-white transition-all shadow-sm hover:shadow-md"

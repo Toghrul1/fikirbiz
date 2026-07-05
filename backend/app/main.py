@@ -35,13 +35,21 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS
+# CORS — exact origin list (no wildcards with credentials)
+_cors_origins = [
+    "https://fikirbiz-six.vercel.app",
+    "http://localhost:5173",
+]
+if settings.FRONTEND_URL and settings.FRONTEND_URL not in _cors_origins:
+    _cors_origins.insert(0, settings.FRONTEND_URL)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL],
+    allow_origins=_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Rate Limiter

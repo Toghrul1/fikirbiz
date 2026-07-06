@@ -4,8 +4,13 @@ FikirBiz Backend — Application Settings.
 Pydantic BaseSettings ilə .env faylından konfiqurasiya oxunur.
 """
 
+from pathlib import Path
+
 from pydantic_settings import BaseSettings
 from typing import Optional
+
+
+_ENV_FILE = Path(__file__).resolve().parents[2] / ".env"
 
 
 class Settings(BaseSettings):
@@ -40,7 +45,7 @@ class Settings(BaseSettings):
     BACKEND_URL: str = "http://localhost:8000"
     DEBUG: bool = False
 
-    model_config = {"env_file": ".env", "extra": "ignore"}
+    model_config = {"env_file": str(_ENV_FILE), "extra": "ignore"}
 
 
 settings = Settings()

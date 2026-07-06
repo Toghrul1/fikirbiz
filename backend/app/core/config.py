@@ -31,9 +31,9 @@ class Settings(BaseSettings):
     CANVA_CLIENT_SECRET: Optional[str] = None
     CANVA_REDIRECT_URI: str = "http://localhost:8000/api/auth/canva/callback"
 
-    # Mistral AI
-    MISTRAL_API_KEY: Optional[str] = None
-    MISTRAL_MODEL: str = "mistral-large-latest"
+    # OpenAI
+    OPENAI_API_KEY: Optional[str] = None
+    OPENAI_MODEL: str = "gpt-4o"
 
     # App
     FRONTEND_URL: str = "http://localhost:5173"

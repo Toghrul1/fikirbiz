@@ -1,17 +1,13 @@
 """
 FikirBiz Backend — Instagram Content Generator Service.
 
-Mistral AI ilə Instagram post caption, Reels script və hashtag yaratma.
+OpenAI ilə Instagram post caption, Reels script və hashtag yaratma.
 """
 
 import json
 from typing import AsyncGenerator
 
-from mistralai.client import Mistral
-from mistralai.client.models import (
-    SystemMessage,
-    UserMessage,
-)
+from openai import OpenAI
 
 from app.core.config import settings
 from app.schemas import ContentGenerateRequest
@@ -81,29 +77,29 @@ class ContentService:
         request: ContentGenerateRequest,
     ) -> AsyncGenerator[str, None]:
         """
-        Mistral AI ilə Instagram content yaradır.
+        OpenAI ilə Instagram content yaradır.
 
         Yield edilən format:
         - data: {"type": "content", "data": {...}}\n\n
         - data: {"type": "error", "data": "..."}\n\n
         - data: [DONE]\n\n
         """
-        if not settings.MISTRAL_API_KEY:
-            yield _sse_event("error", "Mistral API açarı təyin olunmayıb.")
+        if not settings.OPENAI_API_KEY:
+            yield _sse_event("error", "OpenAI API açarı təyin olunmayıb.")
             yield _sse_done()
             return
 
-        client = Mistral(api_key=settings.MISTRAL_API_KEY)
+        client = OpenAI(api_key=settings.OPENAI_API_KEY)
         prompt = ContentService._build_prompt(request)
 
         messages = [
-            SystemMessage(content=CONTENT_SYSTEM_PROMPT),
-            UserMessage(content=prompt),
+            {"role": "system", "content": CONTENT_SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
         ]
 
         try:
-            response = client.chat.complete(
-                model=settings.MISTRAL_MODEL,
+            response = client.chat.completions.create(
+                model=settings.OPENAI_MODEL,
                 messages=messages,
                 temperature=0.8,
                 max_tokens=4096,

@@ -1,24 +1,14 @@
 """
-FikirBiz Backend — Mistral AI Service.
+FikirBiz Backend — OpenAI Service.
 
-Mistral Large ilə real-time streaming chat və Canva dizayn yaratma.
+OpenAI ilə real-time streaming chat və Canva dizayn yaratma.
 """
 
 import json
 import uuid
 from typing import AsyncGenerator
 
-from mistralai.client import Mistral
-from mistralai.client.models import (
-    AssistantMessage,
-    CompletionEvent,
-    Function,
-    SystemMessage,
-    Tool,
-    ToolCall,
-    ToolMessage,
-    UserMessage,
-)
+from openai import OpenAI
 
 from app.core.config import settings
 
@@ -42,12 +32,12 @@ Canva dizayn növləri:
 Dizayn yaratdıqdan sonra istifadəçiyə dizayn linkini təqdim et.
 """
 
-CANVA_DESIGN_TOOL = Tool(
-    type="function",
-    function=Function(
-        name="create_canva_design",
-        description="Canva-da yeni dizayn yaradır. İstifadəçinin tələbinə uyğun dizayn növünü seç və yarat.",
-        parameters={
+CANVA_DESIGN_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "create_canva_design",
+        "description": "Canva-da yeni dizayn yaradır. İstifadəçinin tələbinə uyğun dizayn növünü seç və yarat.",
+        "parameters": {
             "type": "object",
             "properties": {
                 "design_type": {
@@ -62,8 +52,8 @@ CANVA_DESIGN_TOOL = Tool(
             },
             "required": ["design_type", "title"],
         },
-    ),
-)
+    },
+}
 
 
 def _sse_event(event_type: str, data) -> str:
@@ -77,8 +67,8 @@ def _sse_done() -> str:
     return "data: [DONE]\n\n"
 
 
-class MistralService:
-    """Mistral AI chat xidməti."""
+class OpenAIService:
+    """OpenAI chat xidməti."""
 
     @staticmethod
     def _build_messages(
@@ -86,16 +76,16 @@ class MistralService:
         message_history: list[dict],
         has_canva: bool,
     ) -> list:
-        """Mistral API üçün mesaj siyahısını hazırlayır."""
-        messages = [SystemMessage(content=SYSTEM_PROMPT)]
+        """OpenAI API üçün mesaj siyahısını hazırlayır."""
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
         for msg in message_history:
             if msg.get("role") == "user":
-                messages.append(UserMessage(content=msg["content"]))
+                messages.append({"role": "user", "content": msg["content"]})
             elif msg.get("role") == "assistant":
-                messages.append(AssistantMessage(content=msg["content"]))
+                messages.append({"role": "assistant", "content": msg["content"]})
 
-        messages.append(UserMessage(content=prompt))
+        messages.append({"role": "user", "content": prompt})
         return messages
 
     @staticmethod
@@ -106,7 +96,7 @@ class MistralService:
         create_design_fn=None,
     ) -> AsyncGenerator[str, None]:
         """
-        Mistral API-yə sorğu göndərir və SSE formatında streaming qaytarır.
+        OpenAI API-yə sorğu göndərir və SSE formatında streaming qaytarır.
 
         Yield edilən format:
         - data: {"type": "text", "data": "..."}\n\n
@@ -117,99 +107,91 @@ class MistralService:
         if message_history is None:
             message_history = []
 
-        if not settings.MISTRAL_API_KEY:
-            yield _sse_event("error", "Mistral API açarı təyin olunmayıb. Zəhmət olmasa .env faylında MISTRAL_API_KEY-i təyin edin.")
+        if not settings.OPENAI_API_KEY:
+            yield _sse_event("error", "OpenAI API açarı təyin olunmayıb. Zəhmət olmasa .env faylında OPENAI_API_KEY-i təyin edin.")
             yield _sse_done()
             return
 
-        client = Mistral(api_key=settings.MISTRAL_API_KEY)
-        messages = MistralService._build_messages(prompt, message_history, has_canva)
+        client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        messages = OpenAIService._build_messages(prompt, message_history, has_canva)
         tools = [CANVA_DESIGN_TOOL] if has_canva else None
 
         try:
-            stream = client.chat.stream(
-                model=settings.MISTRAL_MODEL,
+            stream = client.chat.completions.create(
+                model=settings.OPENAI_MODEL,
                 messages=messages,
                 tools=tools,
                 temperature=0.7,
                 max_tokens=2048,
+                stream=True,
             )
 
             tool_calls_buffer = {}
-            text_buffer = ""
 
-            with stream as event_stream:
-                for event in event_stream:
-                    chunk: CompletionEvent = event
-                    delta = chunk.data.choices[0].delta
-                    finish_reason = chunk.data.choices[0].finish_reason
+            for chunk in stream:
+                delta = chunk.choices[0].delta if chunk.choices else None
+                finish_reason = chunk.choices[0].finish_reason if chunk.choices else None
 
-                    # Text content streaming
-                    if delta.content:
-                        text_buffer += delta.content
-                        yield _sse_event("text", delta.content)
+                if delta and delta.content:
+                    yield _sse_event("text", delta.content)
 
-                    # Tool calls buffering
-                    if delta.tool_calls:
-                        for tc in delta.tool_calls:
-                            idx = tc.index if tc.index is not None else 0
-                            if idx not in tool_calls_buffer:
-                                tool_calls_buffer[idx] = {
-                                    "id": tc.id or "",
-                                    "name": "",
-                                    "arguments": "",
-                                }
-                            if tc.id:
-                                tool_calls_buffer[idx]["id"] = tc.id
-                            if tc.function:
-                                if tc.function.name:
-                                    tool_calls_buffer[idx]["name"] = tc.function.name
-                                if tc.function.arguments:
-                                    tool_calls_buffer[idx]["arguments"] += tc.function.arguments
+                if delta and delta.tool_calls:
+                    for tc in delta.tool_calls:
+                        idx = tc.index if tc.index is not None else 0
+                        if idx not in tool_calls_buffer:
+                            tool_calls_buffer[idx] = {
+                                "id": tc.id or "",
+                                "name": "",
+                                "arguments": "",
+                            }
+                        if tc.id:
+                            tool_calls_buffer[idx]["id"] = tc.id
+                        if tc.function:
+                            if tc.function.name:
+                                tool_calls_buffer[idx]["name"] = tc.function.name
+                            if tc.function.arguments:
+                                tool_calls_buffer[idx]["arguments"] += tc.function.arguments
 
-                    # Tool call tamamlandıqda
-                    if finish_reason == "tool_calls":
-                        for idx, tc_data in tool_calls_buffer.items():
-                            if tc_data["name"] == "create_canva_design":
-                                try:
-                                    args = json.loads(tc_data["arguments"])
-                                    design_type = args.get("design_type", "doc")
-                                    title = args.get("title", prompt[:50])
+                if finish_reason == "tool_calls":
+                    for idx, tc_data in tool_calls_buffer.items():
+                        if tc_data["name"] == "create_canva_design":
+                            try:
+                                args = json.loads(tc_data["arguments"])
+                                design_type = args.get("design_type", "doc")
+                                title = args.get("title", prompt[:50])
 
-                                    # Backend ilə real Canva dizaynı yarat
-                                    if create_design_fn:
-                                        try:
-                                            design = await create_design_fn(
-                                                design_type=design_type,
-                                                title=title,
-                                            )
-                                            design_url = {
-                                                "designId": design.id,
-                                                "editUrl": design.edit_url,
-                                                "viewUrl": design.view_url,
-                                                "contentType": design_type.upper(),
-                                                "title": title,
-                                                "thumbnailUrl": design.thumbnail_url,
-                                                "createdAt": design.created_at,
-                                            }
-                                            yield _sse_event("design_url", design_url)
-                                            yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün yuxarıdakı linkə keçin.")
-                                        except Exception as e:
-                                            yield _sse_event("error", f"Canva dizaynı yaradıla bilmədi: {str(e)}")
-                                    else:
-                                        # Fallback: mock dizayn
-                                        design_id = str(uuid.uuid4())[:8]
+                                if create_design_fn:
+                                    try:
+                                        design = await create_design_fn(
+                                            design_type=design_type,
+                                            title=title,
+                                        )
                                         design_url = {
-                                            "designId": design_id,
-                                            "editUrl": f"https://canva.com/design/{design_id}/edit",
+                                            "designId": design.id,
+                                            "editUrl": design.edit_url,
+                                            "viewUrl": design.view_url,
                                             "contentType": design_type.upper(),
                                             "title": title,
+                                            "thumbnailUrl": design.thumbnail_url,
+                                            "createdAt": design.created_at,
                                         }
                                         yield _sse_event("design_url", design_url)
-                                        yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün linkə keçin.")
+                                        yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün yuxarıdakı linkə keçin.")
+                                    except Exception as e:
+                                        yield _sse_event("error", f"Canva dizaynı yaradıla bilmədi: {str(e)}")
+                                else:
+                                    design_id = str(uuid.uuid4())[:8]
+                                    design_url = {
+                                        "designId": design_id,
+                                        "editUrl": f"https://canva.com/design/{design_id}/edit",
+                                        "contentType": design_type.upper(),
+                                        "title": title,
+                                    }
+                                    yield _sse_event("design_url", design_url)
+                                    yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün linkə keçin.")
 
-                                except json.JSONDecodeError:
-                                    yield _sse_event("error", "Dizayn parametrlərini oxumaq mümkün olmadı.")
+                            except json.JSONDecodeError:
+                                yield _sse_event("error", "Dizayn parametrlərini oxumaq mümkün olmadı.")
 
             yield _sse_done()
 

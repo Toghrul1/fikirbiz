@@ -1,7 +1,7 @@
 """
 FikirBiz Backend — Chat/AI Gateway Router.
 
-Mistral AI ilə real-time streaming chat endpoint-i (SSE stream).
+OpenAI ilə real-time streaming chat endpoint-i (SSE stream).
 """
 
 from typing import Annotated
@@ -20,7 +20,7 @@ from app.services.canva_service import (
     canva_api_request,
     get_connection_status,
 )
-from app.services.mistral_service import MistralService
+from app.services.mistral_service import OpenAIService
 
 router = APIRouter(
     prefix="/api/chat",
@@ -83,7 +83,7 @@ async def chat_endpoint(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """
-    Chat endpointi — Mistral AI ilə real-time SSE stream.
+    Chat endpointi — OpenAI ilə real-time SSE stream.
     """
     # Canva bağlantısını DB-dən yoxla
     canva_status = await get_connection_status(user.id, db)
@@ -99,7 +99,7 @@ async def chat_endpoint(
         )
 
     return StreamingResponse(
-        MistralService.stream_chat(
+        OpenAIService.stream_chat(
             prompt=body.prompt,
             message_history=body.message_history,
             has_canva=has_canva,

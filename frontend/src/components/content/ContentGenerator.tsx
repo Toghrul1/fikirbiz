@@ -391,10 +391,7 @@ export function ContentGenerator() {
           </div>
         )}
 
-        {/* Footer */}
-        <p className="text-center text-xs text-brand-khaki mt-6">
-          {t('poweredBy')}
-        </p>
+
       </div>
     </div>
   );

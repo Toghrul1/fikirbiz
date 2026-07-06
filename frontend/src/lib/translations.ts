@@ -71,7 +71,7 @@ const translations = {
     caption: 'Caption',
     hashtags: 'Hashtags',
     reelsScript: 'Reels Script',
-    poweredBy: 'Powered by Mistral AI. API key stored securely as a server secret.',
+    poweredBy: '',
     
     // Admin Dashboard
     admin: 'Admin',
@@ -160,7 +160,7 @@ const translations = {
     caption: 'Açıqlama',
     hashtags: 'Teqlər',
     reelsScript: 'Reels Ssenari',
-    poweredBy: 'Mistral AI tərəfindən hazırlanmışdır.',
+    poweredBy: '',
     
     admin: 'Admin',
     totalCustomers: 'Ümumi Müştəri',
@@ -248,7 +248,7 @@ const translations = {
     caption: 'Açıklama',
     hashtags: 'Etiketler',
     reelsScript: 'Reels Senaryosu',
-    poweredBy: 'Mistral AI tarafından desteklenmektedir.',
+    poweredBy: '',
     
     admin: 'Admin',
     totalCustomers: 'Toplam Müşteri',
@@ -336,7 +336,7 @@ const translations = {
     caption: 'Подпись',
     hashtags: 'Хэштеги',
     reelsScript: 'Сценарий Reels',
-    poweredBy: 'На базе Mistral AI.',
+    poweredBy: '',
     
     admin: 'Админ',
     totalCustomers: 'Всего клиентов',
@@ -424,7 +424,7 @@ const translations = {
     caption: 'التعليق',
     hashtags: 'الهاشتاغات',
     reelsScript: 'نص Reels',
-    poweredBy: 'بدعم من Mistral AI.',
+    poweredBy: '',
     
     admin: 'مدير',
     totalCustomers: 'إجمالي العملاء',
@@ -512,7 +512,7 @@ const translations = {
     caption: 'Beschreibung',
     hashtags: 'Hashtags',
     reelsScript: 'Reels Skript',
-    poweredBy: 'Unterstützt von Mistral AI.',
+    poweredBy: '',
     
     admin: 'Admin',
     totalCustomers: 'Gesamte Kunden',
@@ -600,7 +600,7 @@ const translations = {
     caption: 'Légende',
     hashtags: 'Hashtags',
     reelsScript: 'Script Reels',
-    poweredBy: 'Propulsé par Mistral AI.',
+    poweredBy: '',
     
     admin: 'Admin',
     totalCustomers: 'Total clients',
@@ -688,7 +688,7 @@ const translations = {
     caption: 'Pie de foto',
     hashtags: 'Hashtags',
     reelsScript: 'Guion Reels',
-    poweredBy: 'Impulsado por Mistral AI.',
+    poweredBy: '',
     
     admin: 'Admin',
     totalCustomers: 'Total de clientes',
@@ -776,7 +776,7 @@ const translations = {
     caption: 'Didascalia',
     hashtags: 'Hashtag',
     reelsScript: 'Script Reels',
-    poweredBy: 'Powered by Mistral AI.',
+    poweredBy: '',
     
     admin: 'Admin',
     totalCustomers: 'Totale clienti',
@@ -864,7 +864,7 @@ const translations = {
     caption: 'Legenda',
     hashtags: 'Hashtags',
     reelsScript: 'Roteiro Reels',
-    poweredBy: 'Desenvolvido com Mistral AI.',
+    poweredBy: '',
     
     admin: 'Admin',
     totalCustomers: 'Total de clientes',

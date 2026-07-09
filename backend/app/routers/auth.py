@@ -86,7 +86,7 @@ async def register(
             detail={"code": "VALIDATION_ERROR", "message": "Şifrə tələblərə cavab vermir", "errors": errors},
         )
         
-    # Yeni istifadəçi yarat (role='customer')
+    # Yeni istifadəçi hazırla (role='customer')
     user = User(
         first_name=body.first_name,
         last_name=body.last_name,
@@ -103,7 +103,7 @@ async def register(
     except Exception:
         pass # Req 1.8: göndərmə uğursuz olsada qeydiyyat prosesi ləğv edilməməlidir
         
-    # Tokenləri yarat
+    # Tokenləri hazırla
     access_token = TokenService.create_access_token(user.id, user.role, user.email)
     raw_refresh, token_hash = TokenService.create_refresh_token()
     await TokenService.save_refresh_token(db, user.id, token_hash)

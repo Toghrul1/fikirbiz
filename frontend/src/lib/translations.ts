@@ -116,7 +116,7 @@ const translations = {
     registerTitle: 'Qeydiyyat',
     firstName: 'Ad',
     lastName: 'Soyad',
-    createAccount: 'Hesab yarat',
+    createAccount: 'Hesab hazırla',
     hasAccount: 'Artıq hesabınız var?',
     signInLink: 'Daxil olun',
     tooShort: 'Minimum 8 simvol',
@@ -140,7 +140,7 @@ const translations = {
     resetSuccessMsg: 'Şifrəniz uğurla yeniləndi!',
     
     contentTitle: 'FikirBiz Basic',
-    contentDesc: 'Peşəkar Instagram post və Reels məzmununu saniyələr içində yaradın.',
+    contentDesc: 'Peşəkar Instagram post və Reels məzmununu saniyələr içində hazırlayın.',
     language: 'Dil',
     productDetails: 'Məhsul / Xidmət Detalları',
     productTopic: 'Məhsul / Xidmət / Mövzu',

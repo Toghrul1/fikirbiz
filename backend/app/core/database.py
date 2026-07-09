@@ -47,6 +47,6 @@ async def get_db():
 
 
 async def create_tables():
-    """Development üçün — bütün cədvəlləri yaradır."""
+    """Development üçün — bütün cədvəlləri hazırlayır."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

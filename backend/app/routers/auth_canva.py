@@ -5,7 +5,7 @@ Canva Connect API OAuth 2.0 Authorization Code Flow with PKCE.
 Rəsmi sənədlər: https://www.canva.dev/docs/connect/authentication/
 
 Endpoint-lər:
-- GET  /login       — OAuth authorization URL yaradır, Canva-ya yönləndirir
+- GET  /login       — OAuth authorization URL hazırlayır, Canva-ya yönləndirir
 - GET  /callback    — Canva-dan redirect, token exchange, DB-yə saxlama
 - POST /disconnect  — Canva bağlantısını kəsir
 - POST /refresh     — Token-ları yeniləyir

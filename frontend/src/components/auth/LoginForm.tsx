@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { axiosInstance } from '@/lib/axiosInstance';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from '@/lib/useTranslation';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
@@ -30,10 +31,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
     setIsLoading(true);
 
     try {
-      const { axiosInstance } = await import('@/lib/axiosInstance');
       const res = await axiosInstance.post('/api/auth/login', { email, password, remember_me: rememberMe });
       
-      const { useAuthStore } = await import('@/store/authStore');
       useAuthStore.getState().setUser({
         id: res.data.id,
         email: res.data.email,

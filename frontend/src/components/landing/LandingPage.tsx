@@ -75,7 +75,7 @@ export const LandingPage: React.FC = () => {
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
               </svg>
-              Süni intellekt ilə dizayn yaradın
+              Süni intellekt ilə dizayn hazırlayın
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight">
@@ -87,7 +87,7 @@ export const LandingPage: React.FC = () => {
             </h1>
 
             <p className="text-base sm:text-lg text-brand-khaki/80 max-w-md leading-relaxed">
-              FikirBiz AI ilə istənilən dizaynı bir neçə saniyədə yaradın. Canva ilə birləşən güclü süni intellekt köməkçiniz.
+              FikirBiz AI ilə istənilən dizaynı bir neçə saniyədə hazırlayın. Canva ilə birləşən güclü süni intellekt köməkçiniz.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mt-2">

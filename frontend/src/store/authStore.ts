@@ -22,7 +22,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   redirectAfterLogin: null,
 
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
   
   setRedirectAfterLogin: (path) => set({ redirectAfterLogin: path }),
 

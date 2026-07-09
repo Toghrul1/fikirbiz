@@ -1,7 +1,7 @@
 """
 FikirBiz Backend — Content Generator Router.
 
-Instagram content (caption, hashtags, Reels script) yaratma endpoint-i.
+Instagram content (caption, hashtags, Reels script) hazırlama endpoint-i.
 """
 
 from typing import Annotated
@@ -26,7 +26,7 @@ async def generate_content(
     payload: Annotated[JWTPayload, Depends(verify_token)],
 ):
     """
-    Instagram content yaradır — caption, hashtags və Reels script (SSE stream).
+    Instagram content hazırlayır — caption, hashtags və Reels script (SSE stream).
     """
     return StreamingResponse(
         ContentService.generate_content(body),

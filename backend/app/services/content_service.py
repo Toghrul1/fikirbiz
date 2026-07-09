@@ -220,7 +220,7 @@ class ContentService:
         request: ContentGenerateRequest,
     ) -> AsyncGenerator[str, None]:
         """
-        GPT-4o + Mistral Large ensemble ilə Instagram content yaradır.
+        GPT-4o + Mistral Large ensemble ilə Instagram content hazırlayır.
         Hər iki model paralel işləyir, ən yaxşı nəticələr birləşdirilir.
 
         Yield edilən format:
@@ -267,7 +267,7 @@ class ContentService:
 
 
 def _sse_event(event_type: str, data) -> str:
-    """SSE formatında event yaradır."""
+    """SSE formatında event hazırlayır."""
     payload = json.dumps({"type": event_type, "data": data}, ensure_ascii=False)
     return f"data: {payload}\n\n"
 

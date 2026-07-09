@@ -1,7 +1,7 @@
 """
 FikirBiz Backend — OpenAI Service.
 
-OpenAI ilə real-time streaming chat və Canva dizayn yaratma.
+OpenAI ilə real-time streaming chat və Canva dizayn hazırlama.
 """
 
 import json
@@ -13,14 +13,14 @@ from openai import OpenAI
 from app.core.config import settings
 
 SYSTEM_PROMPT = """Sən FikirBiz platformasının AI köməkçisisən. Sənin adın FikirBiz AI-dır.
-Sən istifadəçilərə Canva-da dizayn yaratmaqda kömək edirsən.
+Sən istifadəçilərə Canva-da dizayn hazırlamaqda kömək edirsən.
 
 Əsas qaydalar:
 - Azərbaycan dilində cavab ver.
 - Qısa və aydın cavablar ver.
-- Əgər istifadəçi dizayn yaratmaq istəyirsə, create_canva_design tool-unu istifadə et.
+- Əgər istifadəçi dizayn hazırlamaq istəyirsə, create_canva_design tool-unu istifadə et.
 - Dizayn növləri: doc, email, presentation, whiteboard
-- İstifadəçiyə həmişə dizayn yaratmağı təklif et, əgər prompt dizaynla bağlıdırsa.
+- İstifadəçiyə həmişə dizayn hazırlamağı təklif et, əgər prompt dizaynla bağlıdırsa.
 - Professional və yaradıcı ol.
 
 Canva dizayn növləri:
@@ -29,14 +29,14 @@ Canva dizayn növləri:
 - presentation: Təqdimat slides
 - whiteboard: Ağ lövhə
 
-Dizayn yaratdıqdan sonra istifadəçiyə dizayn linkini təqdim et.
+Dizayn hazırladıqdan sonra istifadəçiyə dizayn linkini təqdim et.
 """
 
 CANVA_DESIGN_TOOL = {
     "type": "function",
     "function": {
         "name": "create_canva_design",
-        "description": "Canva-da yeni dizayn yaradır. İstifadəçinin tələbinə uyğun dizayn növünü seç və yarat.",
+        "description": "Canva-da yeni dizayn hazırlayır. İstifadəçinin tələbinə uyğun dizayn növünü seç və hazırla.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -57,7 +57,7 @@ CANVA_DESIGN_TOOL = {
 
 
 def _sse_event(event_type: str, data) -> str:
-    """SSE formatında event yaradır."""
+    """SSE formatında event hazırlayır."""
     payload = json.dumps({"type": event_type, "data": data}, ensure_ascii=False)
     return f"data: {payload}\n\n"
 
@@ -176,9 +176,9 @@ class OpenAIService:
                                             "createdAt": design.created_at,
                                         }
                                         yield _sse_event("design_url", design_url)
-                                        yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün yuxarıdakı linkə keçin.")
+                                        yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı hazırlandı. Dizaynı redaktə etmək üçün yuxarıdakı linkə keçin.")
                                     except Exception as e:
-                                        yield _sse_event("error", f"Canva dizaynı yaradıla bilmədi: {str(e)}")
+                                        yield _sse_event("error", f"Canva dizaynı hazırlana bilmədi: {str(e)}")
                                 else:
                                     design_id = str(uuid.uuid4())[:8]
                                     design_url = {
@@ -188,7 +188,7 @@ class OpenAIService:
                                         "title": title,
                                     }
                                     yield _sse_event("design_url", design_url)
-                                    yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı yaradıldı. Dizaynı redaktə etmək üçün linkə keçin.")
+                                    yield _sse_event("text", f"\n\nCanva-da \"{title}\" mövzusunda {design_type} dizaynı hazırlandı. Dizaynı redaktə etmək üçün linkə keçin.")
 
                             except json.JSONDecodeError:
                                 yield _sse_event("error", "Dizayn parametrlərini oxumaq mümkün olmadı.")

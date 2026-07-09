@@ -1,7 +1,7 @@
 """
 FikirBiz — Token Service.
 
-JWT yaratma/yoxlama, refresh token rotation.
+JWT hazırlama/yoxlama, refresh token rotation.
 """
 
 import hashlib
@@ -22,7 +22,7 @@ class TokenService:
     @staticmethod
     def create_access_token(user_id: str, role: str, email: str) -> str:
         """
-        JWT access token yaradır.
+        JWT access token hazırlayır.
         Müddəti: 1 saat (3600 saniyə).
         """
         now = datetime.now(timezone.utc)
@@ -49,7 +49,7 @@ class TokenService:
     @staticmethod
     def create_refresh_token() -> tuple[str, str]:
         """
-        Opaque refresh token yaradır.
+        Opaque refresh token hazırlayır.
         Qaytarır: (raw_token, token_hash)
         raw_token cookie-yə yazılır, token_hash DB-yə saxlanır.
         """
@@ -86,7 +86,7 @@ class TokenService:
         """
         Refresh token rotation:
         1. Köhnə token-i revoke edir
-        2. Yeni raw_token + hash yaradır
+        2. Yeni raw_token + hash hazırlayır
         Qaytarır: (new_raw_token, new_hash) və ya None (etibarsız token)
         """
         result = await db.execute(
@@ -103,7 +103,7 @@ class TokenService:
         # Köhnəni revoke et
         old_rt.is_revoked = True
 
-        # Yenisini yarat
+        # Yenisini hazırla
         new_raw, new_hash = TokenService.create_refresh_token()
         new_rt = RefreshToken(
             user_id=old_rt.user_id,

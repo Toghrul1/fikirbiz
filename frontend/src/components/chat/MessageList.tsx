@@ -51,15 +51,15 @@ export const MessageList: React.FC = () => {
           <p className="text-brand-khaki/70 mb-6 leading-relaxed">
             İdeyalarınızı canlandırmaq üçün mənə bir prompt verin.
             {connector.status === 'connected'
-              ? ' Canva ilə birbaşa əlaqəli dizaynlar yarada bilərəm.'
-              : ' Canva bağladıqdan sonra dizayn yarada bilərsiniz.'}
+              ? ' Canva ilə birbaşa əlaqəli dizaynlar hazırlaya bilərəm.'
+              : ' Canva bağladıqdan sonra dizayn hazırlaya bilərsiniz.'}
           </p>
 
           {/* Canva Connection */}
           {connector.status !== 'connected' && (
             <div className="mb-6 p-5 rounded-2xl bg-white/70 backdrop-blur-sm border border-white/60 shadow-sm">
               <p className="text-sm text-brand-navy/70 mb-3">
-                Canva hesabınızı bağlayaraq dizayn yaratmağa başlayın
+                Canva hesabınızı bağlayaraq dizayn hazırlamağa başlayın
               </p>
               <CanvaPoweredBy className="justify-center opacity-60" />
             </div>
@@ -69,10 +69,10 @@ export const MessageList: React.FC = () => {
           {connector.status === 'connected' && (
             <div className="grid grid-cols-2 gap-3">
               {[
-                { title: 'İnstaqram postu', desc: 'Qəhvə dükanı üçün gözəl post yarat' },
-                { title: 'Təqdimat', desc: 'Biznes təqdimatı slides yarat' },
-                { title: 'Logo', desc: 'Şirkət üçün logo yarat' },
-                { title: 'Flayer', desc: 'Tədbir üçün flayer yarat' },
+                { title: 'İnstaqram postu', desc: 'Qəhvə dükanı üçün gözəl post hazırla' },
+                { title: 'Təqdimat', desc: 'Biznes təqdimatı slides hazırla' },
+                { title: 'Logo', desc: 'Şirkət üçün logo hazırla' },
+                { title: 'Flayer', desc: 'Tədbir üçün flayer hazırla' },
               ].map((item) => (
                 <div
                   key={item.title}
@@ -108,7 +108,7 @@ export const MessageList: React.FC = () => {
                 <div className="h-2 w-2 rounded-full bg-brand-gold/60 animate-bounce"></div>
               </div>
               <p className="text-xs text-brand-navy/30 mt-2 tracking-wide">
-                {connector.status === 'connected' ? 'Canva dizaynı yaradılır...' : 'FikirBiz AI düşünür...'}
+                {connector.status === 'connected' ? 'Canva dizaynı hazırlanır...' : 'FikirBiz AI düşünür...'}
               </p>
             </div>
           </div>

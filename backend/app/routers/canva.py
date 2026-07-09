@@ -1,11 +1,11 @@
 """
 FikirBiz Backend — Canva Design API Router.
 
-Canva Connect API ilə dizayn yaratma, idxal, ixrac və siyahıya alma.
+Canva Connect API ilə dizayn hazırlama, idxal, ixrac və siyahıya alma.
 Rəsmi sənədlər: https://www.canva.dev/docs/connect/api-reference/
 
 Endpoint-lər:
-- POST /designs/create      — Yeni Canva dizaynı yaradır
+- POST /designs/create      — Yeni Canva dizaynı hazırlayır
 - GET  /designs             — İstifadəçinin dizaynlarını siyahıya alır
 - GET  /designs/{id}        — Dizayn metadata-sını alır
 - POST /designs/{id}/export — Dizaynı ixrac edir
@@ -57,7 +57,7 @@ MAX_VIDEO_SIZE = 500 * 1024 * 1024  # 500 MB
 
 
 class CreateDesignRequest(BaseModel):
-    """Dizayn yaratmaq üçün request body."""
+    """Dizayn hazırlamaq üçün request body."""
     design_type: Optional[str] = Field(
         None,
         description="Preset design type: doc, email, presentation, whiteboard",
@@ -205,7 +205,7 @@ async def create_design(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """
-    Yeni Canva dizaynı yaradır.
+    Yeni Canva dizaynı hazırlayır.
 
     Canva API: POST /v1/designs
     Scope: design:content:write

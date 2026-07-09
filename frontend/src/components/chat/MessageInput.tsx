@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '@/store/appStore';
 
 const PROMPT_SUGGESTIONS = [
-  'İnstaqram postu yarat',
-  'YouTube thumbnail yarat',
-  'Təqdimat slides yarat',
-  'Facebook reklamı yarat',
-  'Flayer yarat',
-  'Logo yarat',
+  'İnstaqram postu hazırla',
+  'YouTube thumbnail hazırla',
+  'Təqdimat slides hazırla',
+  'Facebook reklamı hazırla',
+  'Flayer hazırla',
+  'Logo hazırla',
 ];
 
 export const VoiceButton: React.FC = () => {
@@ -145,7 +145,7 @@ export const MessageInput: React.FC = () => {
             onKeyDown={handleKeyDown}
             placeholder={
               !activeSessionId
-                ? 'Zəhmət olmasa yeni söhbət yaradın'
+                ? 'Zəhmət olmasa yeni söhbət hazırlayın'
                 : connector.status === 'connected'
                   ? 'Dizayn ideyanızı yazın...'
                   : 'Sorğunuzu yazın...'
@@ -174,7 +174,7 @@ export const MessageInput: React.FC = () => {
         <div className="mt-2 flex items-center justify-between px-1">
           <span className="text-[10px] text-brand-navy/30 tracking-wide">
             {connector.status === 'connected'
-              ? 'Canva bağlı — dizayn yarada bilərsiniz'
+              ? 'Canva bağlı — dizayn hazırlaya bilərsiniz'
               : 'Canva bağlı deyil — yalnız mətn söhbəti'}
           </span>
           <span className="text-[10px] text-brand-navy/20 tracking-wide">

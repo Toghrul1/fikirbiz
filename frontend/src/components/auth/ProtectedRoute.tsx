@@ -17,8 +17,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const location = useLocation();
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    if (!user) {
+      checkAuth();
+    }
+  }, [checkAuth, user]);
 
   if (isLoading) {
     return (

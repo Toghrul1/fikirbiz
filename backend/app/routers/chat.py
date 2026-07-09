@@ -36,7 +36,7 @@ async def create_canva_design_from_chat(
     title: str,
 ):
     """
-    Chat-dən Canva dizayn yaradır.
+    Chat-dən Canva dizayn hazırlayır.
     Canva API: POST /v1/designs
     """
     # Canva design_type mapping
@@ -89,7 +89,7 @@ async def chat_endpoint(
     canva_status = await get_connection_status(user.id, db)
     has_canva = canva_status is not None and canva_status.get("connected", False)
 
-    # Canva dizayn yaratma funksiyasını hazırla
+    # Canva dizayn hazırlama funksiyasını hazırla
     async def create_design_fn(design_type: str, title: str):
         return await create_canva_design_from_chat(
             user_id=user.id,

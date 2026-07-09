@@ -65,7 +65,7 @@ def decrypt_token(encrypted_token: str) -> str:
 
 
 def _basic_auth_header() -> str:
-    """Canva API üçün Basic Auth header yaradır.
+    """Canva API üçün Basic Auth header hazırlayır.
 
     Canva sənədləri: Base64 encoded value of {client id}:{client secret}
     """
@@ -76,7 +76,7 @@ def _basic_auth_header() -> str:
 
 def build_authorization_url(redirect_uri: str) -> dict:
     """
-    Canva OAuth authorization URL yaradır.
+    Canva OAuth authorization URL hazırlayır.
 
     Canva rəsmi sənədlərinə uyğun PKCE parametrləri:
     - code_challenge: SHA-256 hash of code_verifier, base64url encoded
@@ -330,7 +330,7 @@ async def save_connection(
 ) -> CanvaConnection:
     """
     Canva OAuth token-larını verilənlər bazasına saxlayır.
-    Mövcud connection varsa yeniləyir, yoxsa yeni yaradır.
+    Mövcud connection varsa yeniləyir, yoxsa yeni hazırlayır.
     """
     now = datetime.now(timezone.utc)
 

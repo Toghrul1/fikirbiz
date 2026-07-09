@@ -13,6 +13,8 @@ services:
         generateValue: true
       - key: OPENAI_API_KEY
         sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
       - key: FRONTEND_URL
         sync: false
       - key: DATABASE_URL

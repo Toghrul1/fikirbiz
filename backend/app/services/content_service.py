@@ -83,18 +83,34 @@ Reels script should have 3-5 vivid scenes with timing.
 """
 
 
+def _to_str(val) -> str:
+    if isinstance(val, str):
+        return val
+    if isinstance(val, list):
+        return "\n".join(str(x) for x in val)
+    return str(val) if val else ""
+
+
+def _to_list(val) -> list:
+    if isinstance(val, list):
+        return [str(x) for x in val if x]
+    if isinstance(val, str):
+        return [x.strip() for x in val.split(",") if x.strip()]
+    return []
+
+
 def _parse_content(raw: str) -> dict | None:
     try:
         parsed = json.loads(raw)
         return {
             "post": {
-                "caption": parsed.get("post", {}).get("caption", ""),
-                "hashtags": parsed.get("post", {}).get("hashtags", []),
+                "caption": _to_str(parsed.get("post", {}).get("caption")),
+                "hashtags": _to_list(parsed.get("post", {}).get("hashtags")),
             },
             "reels": {
-                "script": parsed.get("reels", {}).get("script", ""),
-                "caption": parsed.get("reels", {}).get("caption", ""),
-                "hashtags": parsed.get("reels", {}).get("hashtags", []),
+                "script": _to_str(parsed.get("reels", {}).get("script")),
+                "caption": _to_str(parsed.get("reels", {}).get("caption")),
+                "hashtags": _to_list(parsed.get("reels", {}).get("hashtags")),
             },
         }
     except (json.JSONDecodeError, AttributeError):
@@ -102,7 +118,9 @@ def _parse_content(raw: str) -> dict | None:
 
 
 def _scene_count(script: str) -> int:
-    return script.lower().count("scene") if script else 0
+    if not script:
+        return 0
+    return script.lower().count("scene")
 
 
 def _merge_contents(a: dict, b: dict) -> dict:
@@ -111,22 +129,22 @@ def _merge_contents(a: dict, b: dict) -> dict:
     a_reels = a.get("reels", {})
     b_reels = b.get("reels", {})
 
-    post_caption_a = a_post.get("caption", "")
-    post_caption_b = b_post.get("caption", "")
-    reels_caption_a = a_reels.get("caption", "")
-    reels_caption_b = b_reels.get("caption", "")
-    reels_script_a = a_reels.get("script", "")
-    reels_script_b = b_reels.get("script", "")
+    post_caption_a = _to_str(a_post.get("caption"))
+    post_caption_b = _to_str(b_post.get("caption"))
+    reels_caption_a = _to_str(a_reels.get("caption"))
+    reels_caption_b = _to_str(b_reels.get("caption"))
+    reels_script_a = _to_str(a_reels.get("script"))
+    reels_script_b = _to_str(b_reels.get("script"))
 
-    post_hashtags_a = set(a_post.get("hashtags", []))
-    post_hashtags_b = set(b_post.get("hashtags", []))
-    reels_hashtags_a = set(a_reels.get("hashtags", []))
-    reels_hashtags_b = set(b_reels.get("hashtags", []))
+    post_hashtags_a = set(_to_list(a_post.get("hashtags")))
+    post_hashtags_b = set(_to_list(b_post.get("hashtags")))
+    reels_hashtags_a = set(_to_list(a_reels.get("hashtags")))
+    reels_hashtags_b = set(_to_list(b_reels.get("hashtags")))
 
     return {
         "post": {
             "caption": post_caption_a if len(post_caption_a) >= len(post_caption_b) else post_caption_b,
-            "hashtags": sorted(post_hashtags_a | post_hashtags_b, key=lambda h: post_hashtags_b.intersection if h in post_hashtags_a and h in post_hashtags_b else "")[:25],
+            "hashtags": sorted(post_hashtags_a | post_hashtags_b)[:25],
         },
         "reels": {
             "script": reels_script_a if _scene_count(reels_script_a) >= _scene_count(reels_script_b) else reels_script_b,

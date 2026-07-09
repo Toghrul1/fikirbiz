@@ -93,9 +93,9 @@ def _to_str(val) -> str:
 
 def _to_list(val) -> list:
     if isinstance(val, list):
-        return [str(x) for x in val if x]
+        return [str(x).lstrip("#") for x in val if x and str(x).lstrip("#")]
     if isinstance(val, str):
-        return [x.strip() for x in val.split(",") if x.strip()]
+        return [x.strip().lstrip("#") for x in val.split(",") if x.strip()]
     return []
 
 

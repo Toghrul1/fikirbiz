@@ -116,7 +116,7 @@ const translations = {
     registerTitle: 'Qeydiyyat',
     firstName: 'Ad',
     lastName: 'Soyad',
-    createAccount: 'Hesab hazırla',
+    createAccount: 'Hesab aç',
     hasAccount: 'Artıq hesabınız var?',
     signInLink: 'Daxil olun',
     tooShort: 'Minimum 8 simvol',

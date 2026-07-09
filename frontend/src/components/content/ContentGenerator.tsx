@@ -104,10 +104,10 @@ export function ContentGenerator() {
   const handleCopyAll = () => {
     if (!generatedContent) return;
     if (activeTab === 'post') {
-      const fullText = `${generatedContent.post.caption}\n\n${generatedContent.post.hashtags.map(h => `#${h}`).join(' ')}`;
+      const fullText = `${generatedContent.post.caption}\n\n${generatedContent.post.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' ')}`;
       handleCopy(fullText, 'all-post');
     } else {
-      const fullText = `${generatedContent.reels.script}\n\n---\n\n${generatedContent.reels.caption}\n\n${generatedContent.reels.hashtags.map(h => `#${h}`).join(' ')}`;
+      const fullText = `${generatedContent.reels.script}\n\n---\n\n${generatedContent.reels.caption}\n\n${generatedContent.reels.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' ')}`;
       handleCopy(fullText, 'all-reels');
     }
   };
@@ -308,7 +308,7 @@ export function ContentGenerator() {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">{t('hashtags')}</span>
                       <button
-                        onClick={() => handleCopy(generatedContent.post.hashtags.map(h => `#${h}`).join(' '), 'post-hashtags')}
+                        onClick={() => handleCopy(generatedContent.post.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' '), 'post-hashtags')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
                       >
                         {copiedField === 'post-hashtags' ? `✓ ${t('copied')}` : t('copy')}
@@ -320,7 +320,7 @@ export function ContentGenerator() {
                           key={i}
                           className="px-3 py-1 bg-brand-navy text-white rounded-full text-sm"
                         >
-                          #{tag}
+                          #{tag.replace(/^#+/, '')}
                         </span>
                       ))}
                     </div>
@@ -368,7 +368,7 @@ export function ContentGenerator() {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">{t('hashtags')}</span>
                       <button
-                        onClick={() => handleCopy(generatedContent.reels.hashtags.map(h => `#${h}`).join(' '), 'reels-hashtags')}
+                        onClick={() => handleCopy(generatedContent.reels.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' '), 'reels-hashtags')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
                       >
                         {copiedField === 'reels-hashtags' ? `✓ ${t('copied')}` : t('copy')}
@@ -380,7 +380,7 @@ export function ContentGenerator() {
                           key={i}
                           className="px-3 py-1 bg-brand-navy text-white rounded-full text-sm"
                         >
-                          #{tag}
+                          #{tag.replace(/^#+/, '')}
                         </span>
                       ))}
                     </div>

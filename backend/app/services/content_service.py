@@ -1,12 +1,18 @@
 """
 FikirBiz Backend — Instagram Content Generator Service.
 
-OpenAI ilə Instagram post caption, Reels script və hashtag yaratma.
+GPT-4o + Mistral Large ensemble ilə yüksək keyfiyyətli content generasiyası.
 """
 
+import asyncio
 import json
 from typing import AsyncGenerator
 
+from mistralai.client import Mistral
+from mistralai.client.models import (
+    SystemMessage as MistralSystemMessage,
+    UserMessage as MistralUserMessage,
+)
 from openai import OpenAI
 
 from app.core.config import settings
@@ -46,9 +52,128 @@ Reels script should have 3-5 scenes with timing guidance.
 Reels caption should be shorter (1-2 lines) and punchy.
 """
 
+MISTRAL_SYSTEM_PROMPT = """You are a creative Instagram content specialist with a gift for storytelling and emotional hooks.
+Your task is to generate TWO types of Instagram content:
+
+1. INSTAGRAM POST (static image post)
+2. INSTAGRAM REELS (short video content)
+
+Rules:
+- Always respond in the language specified by the user.
+- Focus on emotional storytelling, viral hooks, and creative angles.
+- Use powerful emojis to boost engagement.
+- Include unique, trending hashtags that the other AI wouldn't think of.
+- Captions should feel personal and authentic, like a real person wrote them.
+
+Response format (JSON only, no markdown):
+{
+  "post": {
+    "caption": "Instagram post caption",
+    "hashtags": ["hashtag1", "hashtag2", ...]
+  },
+  "reels": {
+    "script": "Reels video script with scenes",
+    "caption": "Short caption for Reels",
+    "hashtags": ["hashtag1", "hashtag2", ...]
+  }
+}
+
+Generate exactly 15-20 hashtags for EACH content type.
+Reels script should have 3-5 vivid scenes with timing.
+"""
+
+
+def _parse_content(raw: str) -> dict | None:
+    try:
+        parsed = json.loads(raw)
+        return {
+            "post": {
+                "caption": parsed.get("post", {}).get("caption", ""),
+                "hashtags": parsed.get("post", {}).get("hashtags", []),
+            },
+            "reels": {
+                "script": parsed.get("reels", {}).get("script", ""),
+                "caption": parsed.get("reels", {}).get("caption", ""),
+                "hashtags": parsed.get("reels", {}).get("hashtags", []),
+            },
+        }
+    except (json.JSONDecodeError, AttributeError):
+        return None
+
+
+def _scene_count(script: str) -> int:
+    return script.lower().count("scene") if script else 0
+
+
+def _merge_contents(a: dict, b: dict) -> dict:
+    a_post = a.get("post", {})
+    b_post = b.get("post", {})
+    a_reels = a.get("reels", {})
+    b_reels = b.get("reels", {})
+
+    post_caption_a = a_post.get("caption", "")
+    post_caption_b = b_post.get("caption", "")
+    reels_caption_a = a_reels.get("caption", "")
+    reels_caption_b = b_reels.get("caption", "")
+    reels_script_a = a_reels.get("script", "")
+    reels_script_b = b_reels.get("script", "")
+
+    post_hashtags_a = set(a_post.get("hashtags", []))
+    post_hashtags_b = set(b_post.get("hashtags", []))
+    reels_hashtags_a = set(a_reels.get("hashtags", []))
+    reels_hashtags_b = set(b_reels.get("hashtags", []))
+
+    return {
+        "post": {
+            "caption": post_caption_a if len(post_caption_a) >= len(post_caption_b) else post_caption_b,
+            "hashtags": sorted(post_hashtags_a | post_hashtags_b, key=lambda h: post_hashtags_b.intersection if h in post_hashtags_a and h in post_hashtags_b else "")[:25],
+        },
+        "reels": {
+            "script": reels_script_a if _scene_count(reels_script_a) >= _scene_count(reels_script_b) else reels_script_b,
+            "caption": reels_caption_a if len(reels_caption_a) >= len(reels_caption_b) else reels_caption_b,
+            "hashtags": sorted(reels_hashtags_a | reels_hashtags_b)[:25],
+        },
+    }
+
+
+def _call_gpt4o(prompt: str) -> dict | None:
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    try:
+        response = client.chat.completions.create(
+            model=settings.OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": CONTENT_SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.8,
+            max_tokens=4096,
+            response_format={"type": "json_object"},
+        )
+        return _parse_content(response.choices[0].message.content)
+    except Exception:
+        return None
+
+
+def _call_mistral(prompt: str) -> dict | None:
+    client = Mistral(api_key=settings.MISTRAL_API_KEY)
+    try:
+        response = client.chat.complete(
+            model=settings.MISTRAL_MODEL,
+            messages=[
+                MistralSystemMessage(content=MISTRAL_SYSTEM_PROMPT),
+                MistralUserMessage(content=prompt),
+            ],
+            temperature=0.8,
+            max_tokens=4096,
+            response_format={"type": "json_object"},
+        )
+        return _parse_content(response.choices[0].message.content)
+    except Exception:
+        return None
+
 
 class ContentService:
-    """Instagram content generation xidməti."""
+    """Instagram content generation xidməti — GPT-4o + Mistral ensemble."""
 
     @staticmethod
     def _build_prompt(request: ContentGenerateRequest) -> str:
@@ -77,7 +202,8 @@ class ContentService:
         request: ContentGenerateRequest,
     ) -> AsyncGenerator[str, None]:
         """
-        OpenAI ilə Instagram content yaradır.
+        GPT-4o + Mistral Large ensemble ilə Instagram content yaradır.
+        Hər iki model paralel işləyir, ən yaxşı nəticələr birləşdirilir.
 
         Yield edilən format:
         - data: {"type": "content", "data": {...}}\n\n
@@ -89,55 +215,32 @@ class ContentService:
             yield _sse_done()
             return
 
-        client = OpenAI(api_key=settings.OPENAI_API_KEY)
         prompt = ContentService._build_prompt(request)
 
-        messages = [
-            {"role": "system", "content": CONTENT_SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ]
-
         try:
-            response = client.chat.completions.create(
-                model=settings.OPENAI_MODEL,
-                messages=messages,
-                temperature=0.8,
-                max_tokens=4096,
-                response_format={"type": "json_object"},
-            )
+            gpt4o_task = asyncio.to_thread(_call_gpt4o, prompt)
 
-            raw_content = response.choices[0].message.content
+            mistral_task = None
+            if settings.MISTRAL_API_KEY:
+                mistral_task = asyncio.to_thread(_call_mistral, prompt)
 
-            try:
-                parsed = json.loads(raw_content)
+            results = await asyncio.gather(gpt4o_task, mistral_task, return_exceptions=True)
 
-                content = {
-                    "post": {
-                        "caption": parsed.get("post", {}).get("caption", ""),
-                        "hashtags": parsed.get("post", {}).get("hashtags", []),
-                    },
-                    "reels": {
-                        "script": parsed.get("reels", {}).get("script", ""),
-                        "caption": parsed.get("reels", {}).get("caption", ""),
-                        "hashtags": parsed.get("reels", {}).get("hashtags", []),
-                    },
-                }
+            gpt4o_result = results[0] if not isinstance(results[0], Exception) else None
+            mistral_result = results[1] if mistral_task and not isinstance(results[1], Exception) else None
 
-                yield _sse_event("content", content)
+            if gpt4o_result and mistral_result:
+                content = _merge_contents(gpt4o_result, mistral_result)
+            elif gpt4o_result:
+                content = gpt4o_result
+            elif mistral_result:
+                content = mistral_result
+            else:
+                yield _sse_event("error", "Heç bir AI model cavab vermədi.")
+                yield _sse_done()
+                return
 
-            except json.JSONDecodeError:
-                content = {
-                    "post": {
-                        "caption": raw_content,
-                        "hashtags": [],
-                    },
-                    "reels": {
-                        "script": "",
-                        "caption": "",
-                        "hashtags": [],
-                    },
-                }
-                yield _sse_event("content", content)
+            yield _sse_event("content", content)
 
         except Exception as e:
             yield _sse_event("error", f"Süni intellekt xətası: {str(e)}")

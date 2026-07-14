@@ -130,6 +130,7 @@ export interface ContentGenerateRequest {
   keyFeatures?: string;
   targetAudience?: string;
   callToAction?: string;
+  numCarouselSlides?: number;
 }
 
 export interface InstagramPost {
@@ -145,9 +146,16 @@ export interface InstagramReels {
   hashtags: string[];
 }
 
+export interface CarouselSlide {
+  title: string;
+  caption: string;
+  visualSuggestion: string;
+}
+
 export interface GeneratedContent {
   post: InstagramPost;
   reels: InstagramReels;
+  carousel: CarouselSlide[];
 }
 
 // --- App Store Types ---

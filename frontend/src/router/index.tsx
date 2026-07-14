@@ -13,7 +13,6 @@ const CustomerDashboard = lazy(() => import('@/components/customer/CustomerDashb
 const ProDashboard = lazy(() => import('@/components/customer/ProDashboard'));
 const AdminDashboard = lazy(() => import('@/components/admin/AdminDashboard'));
 const ContentGenerator = lazy(() => import('@/components/content/ContentGenerator'));
-const ChatInterface = lazy(() => import('@/components/chat/ChatInterface'));
 
 function LazyLoaded({ children }: { children: React.ReactNode }) {
   return (
@@ -74,7 +73,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'chat',
-        element: <LazyLoaded><ChatInterface /></LazyLoaded>,
+        element: <Navigate to="/customer/pro/dashboard" replace />,
       },
       {
         path: 'content',

@@ -20,10 +20,10 @@ from app.schemas import ContentGenerateRequest
 
 
 CONTENT_SYSTEM_PROMPT = """You are an expert Instagram content creator and Canva design strategist.
-Your task is to generate TWO types of Instagram content:
+Your task is to generate Instagram content based on the user's request.
 
-1. INSTAGRAM POST (static image post)
-2. INSTAGRAM REELS (short video content)
+If the user asks for CAROUSEL slides, generate ONLY a carousel array with that many slides.
+Otherwise, generate BOTH Instagram Post AND Reels content.
 
 Rules:
 - Always respond in the language specified by the user.
@@ -31,14 +31,18 @@ Rules:
 - Use emojis strategically to increase engagement.
 - Include a mix of popular and niche hashtags for EACH content type.
 - Keep captions concise but impactful.
-- Reels scripts should be hook-driven and attention-grabbing with clear scenes.
 
 For POST content, generate it AS IF you're designing a Canva post design:
 - Write an attention-grabbing TITLE (1 line, emoji welcome) — this is the visual headline on the Canva design.
 - Write the BODY TEXT (2-3 paragraphs) — this is the main text content that goes on the Canva design.
-- Suggest the VISUAL APPROACH — what type of image/photo would be the perfect fit for this Canva design (e.g. "minimal product photography on white background", "lifestyle photo with warm lighting", "bold typography with gradient background", etc.).
+- Suggest the VISUAL APPROACH — what type of image/photo would be the perfect fit for this Canva design.
 
-Response format (JSON only, no markdown):
+For CAROUSEL content, generate exactly the requested number of slides. Each slide should have:
+- A title (visual headline for the slide, short and punchy)
+- Body text (1-2 paragraphs of content for that slide)
+- A visual suggestion for the slide image
+
+Standard response format (JSON only, no markdown):
 {
   "post": {
     "title": "Attention-grabbing title for the Canva design (1 line with emoji)",
@@ -53,19 +57,29 @@ Response format (JSON only, no markdown):
   }
 }
 
+Carousel response format (JSON only, no markdown):
+{
+  "carousel": [
+    {
+      "title": "Slide 1 headline",
+      "caption": "Slide 1 body text",
+      "visual_suggestion": "Slide 1 visual direction"
+    },
+    ...
+  ]
+}
+
 Generate exactly 15-20 relevant hashtags for EACH content type (post and reels).
 Post title should be catchy and visual-focused (great for Canva typography).
 Post caption should be the main body text (2-3 paragraphs with strategic line breaks).
 Visual suggestion should be a specific, actionable photography/design direction.
-Reels script should have 3-5 scenes with timing guidance.
-Reels caption should be shorter (1-2 lines) and punchy.
 """
 
 MISTRAL_SYSTEM_PROMPT = """You are a creative Instagram content specialist with a gift for storytelling and Canva visual design eye.
-Your task is to generate TWO types of Instagram content:
+Your task is to generate Instagram content based on the user's request.
 
-1. INSTAGRAM POST (static image post)
-2. INSTAGRAM REELS (short video content)
+If the user asks for CAROUSEL slides, generate ONLY a carousel array with that many slides.
+Otherwise, generate BOTH Instagram Post AND Reels content.
 
 Rules:
 - Always respond in the language specified by the user.
@@ -79,7 +93,12 @@ For POST content, generate it AS IF you're designing a Canva post design:
 - Write the BODY TEXT (2-3 paragraphs) — the main text content that goes on the Canva design.
 - Suggest the VISUAL APPROACH — what image/photo style fits perfectly for this design.
 
-Response format (JSON only, no markdown):
+For CAROUSEL content, generate exactly the requested number of slides. Each slide should have:
+- A title (visual headline for the slide)
+- Body text (content for that slide)
+- A visual suggestion for the slide image
+
+Standard response format (JSON only, no markdown):
 {
   "post": {
     "title": "Attention-grabbing title for the Canva design",
@@ -94,9 +113,19 @@ Response format (JSON only, no markdown):
   }
 }
 
-Generate exactly 15-20 hashtags for EACH content type.
-Reels script should have 3-5 vivid scenes with timing.
-"""
+Carousel response format (JSON only, no markdown):
+{
+  "carousel": [
+    {
+      "title": "Slide 1 headline",
+      "caption": "Slide 1 body text",
+      "visual_suggestion": "Slide 1 visual direction"
+    },
+    ...
+  ]
+}
+
+Generate exactly 15-20 hashtags for EACH content type."""
 
 
 def _to_str(val) -> str:
@@ -118,6 +147,17 @@ def _to_list(val) -> list:
 def _parse_content(raw: str) -> dict | None:
     try:
         parsed = json.loads(raw)
+        raw_carousel = parsed.get("carousel")
+        if raw_carousel and isinstance(raw_carousel, list):
+            carousel = []
+            for slide in raw_carousel:
+                if isinstance(slide, dict):
+                    carousel.append({
+                        "title": _to_str(slide.get("title")),
+                        "caption": _to_str(slide.get("caption")),
+                        "visual_suggestion": _to_str(slide.get("visual_suggestion")),
+                    })
+            return {"carousel": carousel}
         post_data = parsed.get("post", {})
         return {
             "post": {
@@ -143,6 +183,13 @@ def _scene_count(script: str) -> int:
 
 
 def _merge_contents(a: dict, b: dict) -> dict:
+    # Carousel mode — use result with more slides
+    a_carousel = a.get("carousel")
+    b_carousel = b.get("carousel")
+    if a_carousel is not None or b_carousel is not None:
+        merged = a_carousel if (a_carousel or []) and len(a_carousel) >= len(b_carousel or []) else b_carousel
+        return {"carousel": merged or []}
+
     a_post = a.get("post", {})
     b_post = b.get("post", {})
     a_reels = a.get("reels", {})
@@ -236,7 +283,11 @@ class ContentService:
             parts.append(f"Call to action: {request.call_to_action}")
 
         parts.append(f"\nOutput language: {request.language}")
-        parts.append("\nGenerate BOTH Instagram Post content AND Reels content with separate hashtags.")
+
+        if request.num_carousel_slides:
+            parts.append(f"\nGenerate a CAROUSEL post with exactly {request.num_carousel_slides} slides. Only output the carousel array, no post or reels.")
+        else:
+            parts.append("\nGenerate BOTH Instagram Post content AND Reels content with separate hashtags.")
 
         return "\n".join(parts)
 

@@ -132,6 +132,7 @@ class ContentGenerateRequest(BaseModel):
     key_features: Optional[str] = Field(None, max_length=1000)
     target_audience: Optional[str] = Field(None, max_length=500)
     call_to_action: Optional[str] = Field(None, max_length=200)
+    num_carousel_slides: Optional[int] = Field(None, ge=1, le=20)
 
 
 class InstagramPost(BaseModel):
@@ -147,9 +148,16 @@ class InstagramReels(BaseModel):
     hashtags: list[str]
 
 
+class CarouselSlide(BaseModel):
+    title: str = ""
+    caption: str = ""
+    visual_suggestion: str = ""
+
+
 class GeneratedContent(BaseModel):
     post: InstagramPost
     reels: InstagramReels
+    carousel: list[CarouselSlide] = []
 
 
 class ContentGenerateResponse(BaseModel):

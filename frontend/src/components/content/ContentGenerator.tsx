@@ -13,11 +13,12 @@ export function ContentGenerator() {
   const [keyFeatures, setKeyFeatures] = useState('');
   const [targetAudience, setTargetAudience] = useState('');
   const [callToAction, setCallToAction] = useState('');
+  const [numCarouselSlides, setNumCarouselSlides] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'post' | 'reels'>('post');
+  const [activeTab, setActiveTab] = useState<'post' | 'reels' | 'carousel'>('post');
   const { t } = useTranslation();
   const user = useAuthStore(s => s.user);
   const planLabel = user?.plan === 'pro' ? 'FikirBiz Pro' : 'FikirBiz Basic';
@@ -36,6 +37,7 @@ export function ContentGenerator() {
       keyFeatures: keyFeatures.trim() || undefined,
       targetAudience: targetAudience.trim() || undefined,
       callToAction: callToAction.trim() || undefined,
+      numCarouselSlides: activeTab === 'carousel' ? numCarouselSlides : undefined,
     };
 
     try {
@@ -50,6 +52,7 @@ export function ContentGenerator() {
           key_features: request.keyFeatures,
           target_audience: request.targetAudience,
           call_to_action: request.callToAction,
+          num_carousel_slides: request.numCarouselSlides,
         }),
       });
 
@@ -80,19 +83,27 @@ export function ContentGenerator() {
               try {
                 const parsed = JSON.parse(data);
                 if (parsed.type === 'content') {
-                  const rawContent = parsed.data;
+                  const raw = parsed.data;
+                  const rawCarousel = raw.carousel;
                   const mappedContent: GeneratedContent = {
                     post: {
-                      title: rawContent.post?.title || '',
-                      caption: rawContent.post?.caption || '',
-                      visualSuggestion: rawContent.post?.visual_suggestion || '',
-                      hashtags: rawContent.post?.hashtags || [],
+                      title: raw.post?.title || '',
+                      caption: raw.post?.caption || '',
+                      visualSuggestion: raw.post?.visual_suggestion || '',
+                      hashtags: raw.post?.hashtags || [],
                     },
                     reels: {
-                      script: rawContent.reels?.script || '',
-                      caption: rawContent.reels?.caption || '',
-                      hashtags: rawContent.reels?.hashtags || [],
+                      script: raw.reels?.script || '',
+                      caption: raw.reels?.caption || '',
+                      hashtags: raw.reels?.hashtags || [],
                     },
+                    carousel: Array.isArray(rawCarousel)
+                      ? rawCarousel.map((s: Record<string, string>) => ({
+                          title: s.title || '',
+                          caption: s.caption || '',
+                          visualSuggestion: s.visual_suggestion || '',
+                        }))
+                      : [],
                   };
                   setGeneratedContent(mappedContent);
                 } else if (parsed.type === 'error') {
@@ -120,7 +131,12 @@ export function ContentGenerator() {
 
   const handleCopyAll = () => {
     if (!generatedContent) return;
-    if (activeTab === 'post') {
+    if (activeTab === 'carousel') {
+      const allText = generatedContent.carousel
+        .map((slide, i) => `--- Slayd ${i + 1} ---\n${slide.title}\n\n${slide.caption}\n\n🖼️ Vizual Təklif:\n${slide.visualSuggestion}`)
+        .join('\n\n');
+      handleCopy(allText, 'all-carousel');
+    } else if (activeTab === 'post') {
       const fullText = `${generatedContent.post.title}\n\n${generatedContent.post.caption}\n\n🖼️ Vizual Təklif:\n${generatedContent.post.visualSuggestion}\n\n${generatedContent.post.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' ')}`;
       handleCopy(fullText, 'all-post');
     } else {
@@ -144,6 +160,40 @@ export function ContentGenerator() {
 
         {/* Form Card */}
         <div className="relative z-10 bg-white rounded-2xl shadow-lg p-6 mb-6 border border-brand-gray">
+          {/* Content Type Tabs */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab('post')}
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+                activeTab === 'post'
+                  ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
+                  : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
+              }`}
+            >
+              📸 {t('instagramPost')}
+            </button>
+            <button
+              onClick={() => setActiveTab('reels')}
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+                activeTab === 'reels'
+                  ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
+                  : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
+              }`}
+            >
+              🎬 {t('instagramReels')}
+            </button>
+            <button
+              onClick={() => setActiveTab('carousel')}
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+                activeTab === 'carousel'
+                  ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
+                  : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
+              }`}
+            >
+              🎠 Carousel
+            </button>
+          </div>
+
           {/* Language Section */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
@@ -235,6 +285,26 @@ export function ContentGenerator() {
               </div>
             </div>
 
+            {/* Carousel Slides Input */}
+            {activeTab === 'carousel' && (
+              <div className="mb-4">
+                <label className="block text-sm text-brand-khaki mb-1">
+                  🎠 Slayd sayı
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={numCarouselSlides}
+                    onChange={(e) => setNumCarouselSlides(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))}
+                    className="w-24 px-4 py-3 bg-brand-ivory border border-brand-gray rounded-xl text-brand-navy placeholder-brand-gray focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-center font-semibold text-lg"
+                  />
+                  <span className="text-sm text-brand-khaki">slayd</span>
+                </div>
+              </div>
+            )}
+
             {/* Generate Button */}
             <button
               onClick={handleGenerate}
@@ -250,7 +320,7 @@ export function ContentGenerator() {
                   {t('generating')}
                 </span>
               ) : (
-                `✨ ${t('generateContent')}`
+                `✨ ${activeTab === 'carousel' ? `${numCarouselSlides} Slaydlı Carousel Yarat` : t('generateContent')}`
               )}
             </button>
           </div>
@@ -264,7 +334,58 @@ export function ContentGenerator() {
         )}
 
         {/* Generated Content */}
-        {generatedContent && (
+        {generatedContent && activeTab === 'carousel' && generatedContent.carousel.length > 0 && (
+          <div className="relative z-10 bg-white rounded-2xl shadow-lg border border-brand-gray overflow-hidden">
+            <div className="p-6">
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={handleCopyAll}
+                  className="px-4 py-2 bg-brand-ivory hover:bg-brand-gray text-brand-khaki rounded-lg text-sm font-medium transition-colors"
+                >
+                  {copiedField === 'all-carousel' ? `✓ ${t('copied')}` : `📋 Hamısını Kopyala`}
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {generatedContent.carousel.map((slide, i) => (
+                  <div
+                    key={i}
+                    className="bg-gradient-to-br from-brand-navy to-[#0a1520] rounded-2xl p-6 text-white shadow-xl"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-brand-gold text-brand-navy font-bold text-sm">
+                        {i + 1}
+                      </span>
+                      <button
+                        onClick={() => handleCopy(`--- Slayd ${i + 1} ---\n${slide.title}\n\n${slide.caption}\n\n🖼️ Vizual Təklif:\n${slide.visualSuggestion}`, `carousel-${i}`)}
+                        className="text-xs text-brand-gold/70 hover:text-brand-gold transition-colors"
+                      >
+                        {copiedField === `carousel-${i}` ? `✓ ${t('copied')}` : t('copy')}
+                      </button>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-brand-gold mb-3">
+                      {slide.title}
+                    </h3>
+
+                    <p className="text-white/80 leading-relaxed whitespace-pre-wrap mb-4">
+                      {slide.caption}
+                    </p>
+
+                    <div className="border-t border-white/10 pt-3 mt-3">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-brand-gold/60">🖼️ Vizual Təklif</span>
+                      <p className="text-sm text-white/60 italic mt-1">
+                        {slide.visualSuggestion}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {generatedContent && activeTab !== 'carousel' && (
           <div className="relative z-10 bg-white rounded-2xl shadow-lg border border-brand-gray overflow-hidden">
             {/* Tabs */}
             <div className="flex border-b border-brand-gray">
@@ -304,7 +425,6 @@ export function ContentGenerator() {
               {/* Post Content */}
               {activeTab === 'post' && (
                 <div>
-                  {/* Title — başlıq */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">🎨 Başlıq</span>
@@ -320,7 +440,6 @@ export function ContentGenerator() {
                     </div>
                   </div>
 
-                  {/* Caption — mətn */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">📝 Mətn</span>
@@ -336,7 +455,6 @@ export function ContentGenerator() {
                     </div>
                   </div>
 
-                  {/* Visual Suggestion — vizual təklif */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">🖼️ Vizual Təklif</span>
@@ -352,7 +470,6 @@ export function ContentGenerator() {
                     </div>
                   </div>
 
-                  {/* Hashtags */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">{t('hashtags')}</span>
@@ -380,7 +497,6 @@ export function ContentGenerator() {
               {/* Reels Content */}
               {activeTab === 'reels' && (
                 <div>
-                  {/* Script */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">🎬 {t('reelsScript')}</span>
@@ -396,7 +512,6 @@ export function ContentGenerator() {
                     </div>
                   </div>
 
-                  {/* Caption */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">{t('caption')}</span>
@@ -412,7 +527,6 @@ export function ContentGenerator() {
                     </div>
                   </div>
 
-                  {/* Hashtags */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-brand-khaki">{t('hashtags')}</span>
@@ -439,8 +553,6 @@ export function ContentGenerator() {
             </div>
           </div>
         )}
-
-
       </div>
     </div>
   );

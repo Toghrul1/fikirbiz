@@ -7,7 +7,6 @@ import { useTranslation } from '@/lib/useTranslation';
 function App() {
   const { language, setLanguage } = useLanguageStore();
   const { user } = useAuthStore();
-  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const handleLogout = async () => {

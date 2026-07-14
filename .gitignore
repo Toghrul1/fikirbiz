@@ -6,6 +6,7 @@ __pycache__/
 
 # Environment
 .env
+.env.local
 
 # Database
 *.db
@@ -20,10 +21,24 @@ build/
 .idea/
 .DS_Store
 
-# Secrets / API keys
+# Secrets / API keys — block ALL .txt except explicitly allowed
 *.txt
 !README.md
 !requirements.txt
+
+# Deployment leftovers
+Dockerfile
+.dockerignore
+railway.toml
+netlify.toml
+
+# Spec / planning files (Kiro)
+.kiro/
+
+# Audit / report / doc files
+FINAL_REPORT.md
+CANVA_FINAL_AUDIT.md
+RUN.md
 
 # Logs
 *.log

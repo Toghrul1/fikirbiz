@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
@@ -5,12 +6,25 @@ import { RegisterForm } from '@/components/auth/RegisterForm';
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
 import { CanvaCallback } from '@/components/auth/CanvaCallback';
-import { CustomerDashboard } from '@/components/customer/CustomerDashboard';
-import { AdminDashboard } from '@/components/admin/AdminDashboard';
-import { ContentGenerator } from '@/components/content/ContentGenerator';
 import App from '@/App';
-import { ChatInterface } from '@/components/chat/ChatInterface';
 import { LandingPage } from '@/components/landing/LandingPage';
+
+const CustomerDashboard = lazy(() => import('@/components/customer/CustomerDashboard'));
+const AdminDashboard = lazy(() => import('@/components/admin/AdminDashboard'));
+const ContentGenerator = lazy(() => import('@/components/content/ContentGenerator'));
+const ChatInterface = lazy(() => import('@/components/chat/ChatInterface'));
+
+function LazyLoaded({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen w-full items-center justify-center bg-brand-ivory">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-brand-gold border-t-transparent" />
+      </div>
+    }>
+      {children}
+    </Suspense>
+  );
+}
 
 export const router = createBrowserRouter([
   {
@@ -51,15 +65,15 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'dashboard',
-        element: <CustomerDashboard />,
+        element: <LazyLoaded><CustomerDashboard /></LazyLoaded>,
       },
       {
         path: 'chat',
-        element: <ChatInterface />,
+        element: <LazyLoaded><ChatInterface /></LazyLoaded>,
       },
       {
         path: 'content',
-        element: <ContentGenerator />,
+        element: <LazyLoaded><ContentGenerator /></LazyLoaded>,
       }
     ]
   },
@@ -73,7 +87,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'dashboard',
-        element: <AdminDashboard />,
+        element: <LazyLoaded><AdminDashboard /></LazyLoaded>,
       }
     ]
   },

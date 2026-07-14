@@ -4,3 +4,5 @@ import { ContentGenerator } from '../content/ContentGenerator';
 export const CustomerDashboard: React.FC = () => {
   return <ContentGenerator />;
 };
+
+export default CustomerDashboard;

@@ -19,7 +19,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
   const [lockedUntil, setLockedUntil] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login, redirectAfterLogin } = useAuthStore();
+  const { redirectAfterLogin } = useAuthStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { language, setLanguage } = useLanguageStore();
@@ -77,7 +77,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
           <h1 className="text-3xl font-bold tracking-tight">
             {variant === 'admin' ? `${t('adminLabel')} — ` : ''}FikirBiz
           </h1>
-          <p className="mt-1 text-sm text-brand-navy/50">{t('welcomeBack')}</p>
+          <p className="mt-1 text-sm text-brand-navy/50">{variant === 'admin' ? t('fikirBizProTagline') : t('fikirBizBasicTagline')}</p>
         </div>
 
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-[0_8px_40px_rgba(13,27,42,0.06)] border border-white/60 p-8">

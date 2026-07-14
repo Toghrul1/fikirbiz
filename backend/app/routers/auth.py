@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.limiter import limiter
-from app.dependencies.auth import JWTPayload, verify_token
+from app.dependencies.auth import JWTPayload, get_current_active_user, verify_token
 from app.models.password_reset import PasswordReset
 from app.models.user import User
 from app.schemas import (
@@ -336,3 +336,17 @@ async def reset_password(
     await TokenService.revoke_all_user_tokens(db, user.id)
     
     return MessageResponse(message="Şifrəniz uğurla yeniləndi")
+
+
+@router.get("/me", response_model=AuthResponse)
+async def get_current_user(
+    user: Annotated[User, Depends(get_current_active_user)],
+):
+    """JWT token əsasında cari istifadəçinin məlumatlarını qaytarır."""
+    return AuthResponse(
+        id=user.id,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        role=user.role,
+    )

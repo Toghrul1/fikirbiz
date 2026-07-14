@@ -77,7 +77,21 @@ export function ContentGenerator() {
               try {
                 const parsed = JSON.parse(data);
                 if (parsed.type === 'content') {
-                  setGeneratedContent(parsed.data);
+                  const rawContent = parsed.data;
+                  const mappedContent: GeneratedContent = {
+                    post: {
+                      title: rawContent.post?.title || '',
+                      caption: rawContent.post?.caption || '',
+                      visualSuggestion: rawContent.post?.visual_suggestion || '',
+                      hashtags: rawContent.post?.hashtags || [],
+                    },
+                    reels: {
+                      script: rawContent.reels?.script || '',
+                      caption: rawContent.reels?.caption || '',
+                      hashtags: rawContent.reels?.hashtags || [],
+                    },
+                  };
+                  setGeneratedContent(mappedContent);
                 } else if (parsed.type === 'error') {
                   setError(parsed.data);
                 }
@@ -104,7 +118,7 @@ export function ContentGenerator() {
   const handleCopyAll = () => {
     if (!generatedContent) return;
     if (activeTab === 'post') {
-      const fullText = `${generatedContent.post.caption}\n\n${generatedContent.post.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' ')}`;
+      const fullText = `${generatedContent.post.title}\n\n${generatedContent.post.caption}\n\n🖼️ Vizual Təklif:\n${generatedContent.post.visualSuggestion}\n\n${generatedContent.post.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' ')}`;
       handleCopy(fullText, 'all-post');
     } else {
       const fullText = `${generatedContent.reels.script}\n\n---\n\n${generatedContent.reels.caption}\n\n${generatedContent.reels.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' ')}`;
@@ -287,10 +301,26 @@ export function ContentGenerator() {
               {/* Post Content */}
               {activeTab === 'post' && (
                 <div>
-                  {/* Caption */}
+                  {/* Title — başlıq */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-brand-khaki">{t('caption')}</span>
+                      <span className="text-sm font-medium text-brand-khaki">🎨 Başlıq</span>
+                      <button
+                        onClick={() => handleCopy(generatedContent.post.title, 'post-title')}
+                        className="text-xs text-brand-gold hover:text-brand-gold"
+                      >
+                        {copiedField === 'post-title' ? `✓ ${t('copied')}` : t('copy')}
+                      </button>
+                    </div>
+                    <div className="p-4 bg-brand-navy/5 rounded-xl text-brand-navy text-lg font-semibold whitespace-pre-wrap">
+                      {generatedContent.post.title}
+                    </div>
+                  </div>
+
+                  {/* Caption — mətn */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-brand-khaki">📝 Mətn</span>
                       <button
                         onClick={() => handleCopy(generatedContent.post.caption, 'post-caption')}
                         className="text-xs text-brand-gold hover:text-brand-gold"
@@ -300,6 +330,22 @@ export function ContentGenerator() {
                     </div>
                     <div className="p-4 bg-brand-ivory rounded-xl text-brand-navy whitespace-pre-wrap">
                       {generatedContent.post.caption}
+                    </div>
+                  </div>
+
+                  {/* Visual Suggestion — vizual təklif */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-brand-khaki">🖼️ Vizual Təklif</span>
+                      <button
+                        onClick={() => handleCopy(generatedContent.post.visualSuggestion, 'post-visual')}
+                        className="text-xs text-brand-gold hover:text-brand-gold"
+                      >
+                        {copiedField === 'post-visual' ? `✓ ${t('copied')}` : t('copy')}
+                      </button>
+                    </div>
+                    <div className="p-4 bg-gradient-to-r from-brand-navy/5 to-brand-gold/5 rounded-xl text-brand-navy text-sm italic border-l-4 border-l-brand-gold whitespace-pre-wrap">
+                      {generatedContent.post.visualSuggestion}
                     </div>
                   </div>
 
@@ -396,3 +442,5 @@ export function ContentGenerator() {
     </div>
   );
 }
+
+export default ContentGenerator;

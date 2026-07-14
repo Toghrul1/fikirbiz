@@ -19,7 +19,7 @@ from app.core.config import settings
 from app.schemas import ContentGenerateRequest
 
 
-CONTENT_SYSTEM_PROMPT = """You are an expert Instagram content creator and social media strategist.
+CONTENT_SYSTEM_PROMPT = """You are an expert Instagram content creator and Canva design strategist.
 Your task is to generate TWO types of Instagram content:
 
 1. INSTAGRAM POST (static image post)
@@ -33,26 +33,35 @@ Rules:
 - Keep captions concise but impactful.
 - Reels scripts should be hook-driven and attention-grabbing with clear scenes.
 
+For POST content, generate it AS IF you're designing a Canva post design:
+- Write an attention-grabbing TITLE (1 line, emoji welcome) — this is the visual headline on the Canva design.
+- Write the BODY TEXT (2-3 paragraphs) — this is the main text content that goes on the Canva design.
+- Suggest the VISUAL APPROACH — what type of image/photo would be the perfect fit for this Canva design (e.g. "minimal product photography on white background", "lifestyle photo with warm lighting", "bold typography with gradient background", etc.).
+
 Response format (JSON only, no markdown):
 {
   "post": {
-    "caption": "Instagram post caption with emojis and line breaks (2-4 paragraphs)",
+    "title": "Attention-grabbing title for the Canva design (1 line with emoji)",
+    "caption": "Body text for the Canva design (2-3 paragraphs)",
+    "visual_suggestion": "What type of image/visual works best for this design",
     "hashtags": ["hashtag1", "hashtag2", ...]
   },
   "reels": {
-    "script": "Reels video script with scenes:\nScene 1 (0-3s): Hook\nScene 2 (3-10s): Main content\nScene 3 (10-15s): CTA",
+    "script": "Reels video script with scenes:\\nScene 1 (0-3s): Hook\\nScene 2 (3-10s): Main content\\nScene 3 (10-15s): CTA",
     "caption": "Short caption for Reels with emojis",
     "hashtags": ["hashtag1", "hashtag2", ...]
   }
 }
 
 Generate exactly 15-20 relevant hashtags for EACH content type (post and reels).
-Post caption should be 2-4 paragraphs with strategic line breaks.
+Post title should be catchy and visual-focused (great for Canva typography).
+Post caption should be the main body text (2-3 paragraphs with strategic line breaks).
+Visual suggestion should be a specific, actionable photography/design direction.
 Reels script should have 3-5 scenes with timing guidance.
 Reels caption should be shorter (1-2 lines) and punchy.
 """
 
-MISTRAL_SYSTEM_PROMPT = """You are a creative Instagram content specialist with a gift for storytelling and emotional hooks.
+MISTRAL_SYSTEM_PROMPT = """You are a creative Instagram content specialist with a gift for storytelling and Canva visual design eye.
 Your task is to generate TWO types of Instagram content:
 
 1. INSTAGRAM POST (static image post)
@@ -65,10 +74,17 @@ Rules:
 - Include unique, trending hashtags that the other AI wouldn't think of.
 - Captions should feel personal and authentic, like a real person wrote them.
 
+For POST content, generate it AS IF you're designing a Canva post design:
+- Write an attention-grabbing TITLE (1 line, emoji welcome) — the visual headline on the Canva design.
+- Write the BODY TEXT (2-3 paragraphs) — the main text content that goes on the Canva design.
+- Suggest the VISUAL APPROACH — what image/photo style fits perfectly for this design.
+
 Response format (JSON only, no markdown):
 {
   "post": {
-    "caption": "Instagram post caption",
+    "title": "Attention-grabbing title for the Canva design",
+    "caption": "Body text for the Canva design",
+    "visual_suggestion": "What type of image/visual works best",
     "hashtags": ["hashtag1", "hashtag2", ...]
   },
   "reels": {
@@ -102,10 +118,13 @@ def _to_list(val) -> list:
 def _parse_content(raw: str) -> dict | None:
     try:
         parsed = json.loads(raw)
+        post_data = parsed.get("post", {})
         return {
             "post": {
-                "caption": _to_str(parsed.get("post", {}).get("caption")),
-                "hashtags": _to_list(parsed.get("post", {}).get("hashtags")),
+                "title": _to_str(post_data.get("title")),
+                "caption": _to_str(post_data.get("caption")),
+                "visual_suggestion": _to_str(post_data.get("visual_suggestion")),
+                "hashtags": _to_list(post_data.get("hashtags")),
             },
             "reels": {
                 "script": _to_str(parsed.get("reels", {}).get("script")),
@@ -129,8 +148,12 @@ def _merge_contents(a: dict, b: dict) -> dict:
     a_reels = a.get("reels", {})
     b_reels = b.get("reels", {})
 
+    post_title_a = _to_str(a_post.get("title"))
+    post_title_b = _to_str(b_post.get("title"))
     post_caption_a = _to_str(a_post.get("caption"))
     post_caption_b = _to_str(b_post.get("caption"))
+    post_visual_a = _to_str(a_post.get("visual_suggestion"))
+    post_visual_b = _to_str(b_post.get("visual_suggestion"))
     reels_caption_a = _to_str(a_reels.get("caption"))
     reels_caption_b = _to_str(b_reels.get("caption"))
     reels_script_a = _to_str(a_reels.get("script"))
@@ -143,7 +166,9 @@ def _merge_contents(a: dict, b: dict) -> dict:
 
     return {
         "post": {
+            "title": post_title_a if len(post_title_a) >= len(post_title_b) else post_title_b,
             "caption": post_caption_a if len(post_caption_a) >= len(post_caption_b) else post_caption_b,
+            "visual_suggestion": post_visual_a if len(post_visual_a) >= len(post_visual_b) else post_visual_b,
             "hashtags": sorted(post_hashtags_a | post_hashtags_b)[:25],
         },
         "reels": {

@@ -58,12 +58,15 @@ export const AdminDashboard: React.FC = () => {
       <header className="bg-brand-navy text-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <h1 className="text-2xl font-light">
                 <span>Fikir</span><span className="text-brand-gold font-medium">Biz</span>
               </h1>
               <span className="bg-brand-gold text-brand-navy text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
                 {t('admin')}
+              </span>
+              <span className="bg-white/15 text-brand-gold text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+                {t('fikirBizProLabel')}
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -175,3 +178,5 @@ export const AdminDashboard: React.FC = () => {
     </div>
   );
 };
+
+export default AdminDashboard;

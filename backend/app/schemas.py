@@ -133,7 +133,9 @@ class ContentGenerateRequest(BaseModel):
 
 
 class InstagramPost(BaseModel):
+    title: str = ""
     caption: str
+    visual_suggestion: str = ""
     hashtags: list[str]
 
 

@@ -132,7 +132,9 @@ export interface ContentGenerateRequest {
 }
 
 export interface InstagramPost {
+  title: string;
   caption: string;
+  visualSuggestion: string;
   hashtags: string[];
 }
 

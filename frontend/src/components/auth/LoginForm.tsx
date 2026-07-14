@@ -24,6 +24,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
   const { t } = useTranslation();
   const { language, setLanguage } = useLanguageStore();
 
+  const params = new URLSearchParams(window.location.search);
+  const planFromUrl = params.get('plan') || 'basic';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -38,10 +41,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
         email: res.data.email,
         firstName: res.data.first_name,
         lastName: res.data.last_name,
-        role: res.data.role
+        role: res.data.role,
+        plan: res.data.plan || 'basic'
       });
-      
-      const redirectPath = redirectAfterLogin || (res.data.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard');
+
+      const plan = res.data.plan || 'basic';
+      const redirectPath = redirectAfterLogin || (
+        res.data.role === 'admin' ? '/admin/dashboard'
+        : plan === 'pro' ? '/customer/pro/dashboard'
+        : '/customer/dashboard'
+      );
       useAuthStore.getState().setRedirectAfterLogin(null);
       navigate(redirectPath, { replace: true });
     } catch (err: any) {
@@ -77,7 +86,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
           <h1 className="text-3xl font-bold tracking-tight">
             {variant === 'admin' ? `${t('adminLabel')} — ` : ''}FikirBiz
           </h1>
-          <p className="mt-1 text-sm text-brand-navy/50">{variant === 'admin' ? t('fikirBizProTagline') : t('fikirBizBasicTagline')}</p>
+          <p className="mt-1 text-sm text-brand-navy/50">
+  {variant === 'admin' ? t('fikirBizProTagline') : planFromUrl === 'pro' ? t('fikirBizProTagline') : t('fikirBizBasicTagline')}
+</p>
         </div>
 
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-[0_8px_40px_rgba(13,27,42,0.06)] border border-white/60 p-8">

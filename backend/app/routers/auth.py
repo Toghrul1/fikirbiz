@@ -93,6 +93,7 @@ async def register(
         email=body.email,
         password_hash=PasswordService.hash_password(body.password),
         role="customer",
+        plan=body.plan,
     )
     db.add(user)
     await db.flush()
@@ -116,6 +117,7 @@ async def register(
         first_name=user.first_name,
         last_name=user.last_name,
         role=user.role,
+        plan=user.plan,
     )
 
 
@@ -166,7 +168,7 @@ async def login(
     user.last_login_at = datetime.now(timezone.utc)
     user.locked_until = None
     
-    access_token = TokenService.create_access_token(user.id, user.role, user.email)
+    access_token = TokenService.create_access_token(user.id, user.role, user.email, user.plan)
     raw_refresh, token_hash = TokenService.create_refresh_token()
     await TokenService.save_refresh_token(
         db, 
@@ -183,6 +185,7 @@ async def login(
         first_name=user.first_name,
         last_name=user.last_name,
         role=user.role,
+        plan=user.plan,
     )
 
 
@@ -216,7 +219,7 @@ async def refresh_token(
     if not user or not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail={"code": "INVALID_TOKEN", "message": "İstifadəçi aktiv deyil"})
         
-    new_access = TokenService.create_access_token(user.id, user.role, user.email)
+    new_access = TokenService.create_access_token(user.id, user.role, user.email, user.plan)
     
     # Determine remember_me based on remaining time of the new RT
     remaining_days = (rt_model.expires_at - datetime.now(timezone.utc)).days
@@ -349,4 +352,5 @@ async def get_current_user(
         first_name=user.first_name,
         last_name=user.last_name,
         role=user.role,
+        plan=user.plan,
     )

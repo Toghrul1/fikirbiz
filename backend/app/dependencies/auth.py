@@ -20,6 +20,7 @@ class JWTPayload(BaseModel):
     sub: str
     role: str
     email: str
+    plan: str = "basic"
     iat: float
     exp: float
 

@@ -20,6 +20,9 @@ export const RegisterForm: React.FC = () => {
   const { t } = useTranslation();
   const { language, setLanguage } = useLanguageStore();
 
+  const params = new URLSearchParams(window.location.search);
+  const planFromUrl = params.get('plan') || 'basic';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGlobalError(null);
@@ -32,19 +35,21 @@ export const RegisterForm: React.FC = () => {
         first_name: firstName,
         last_name: lastName,
         email,
-        password
+        password,
+        plan: planFromUrl,
       });
-      
+
       const { useAuthStore } = await import('@/store/authStore');
       useAuthStore.getState().setUser({
         id: res.data.id,
         email: res.data.email,
         firstName: res.data.first_name,
         lastName: res.data.last_name,
-        role: res.data.role
+        role: res.data.role,
+        plan: res.data.plan || 'basic',
       });
-      
-      navigate('/customer/dashboard', { replace: true });
+
+      navigate(planFromUrl === 'pro' ? '/customer/pro/dashboard' : '/customer/dashboard', { replace: true });
     } catch (err: any) {
       if (err.message === 'Network Error') {
         setGlobalError(t('networkError'));

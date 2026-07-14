@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useLanguageStore } from '@/store/languageStore';
 import { useAuthStore } from '@/store/authStore';
@@ -7,13 +6,22 @@ import { useTranslation } from '@/lib/useTranslation';
 
 function App() {
   const { language, setLanguage } = useLanguageStore();
-  const logout = useAuthStore(s => s.logout);
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/login');
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch {
+      // backend cavab verməsə belə logout
+    }
+    useAuthStore.getState().setUser(null);
+    localStorage.removeItem('sessions');
+    window.location.href = '/login';
   };
 
   return (

@@ -20,10 +20,13 @@ export const Sidebar: React.FC = () => {
   } = useAppStore();
 
   const { logout, user } = useAuthStore();
+  const isPro = user?.plan === 'pro';
 
   useEffect(() => {
-    checkCanvaStatus();
-  }, [checkCanvaStatus]);
+    if (isPro) {
+      checkCanvaStatus();
+    }
+  }, [checkCanvaStatus, isPro]);
 
   const handleCanvaToggle = () => {
     if (connector.status === 'connected') {
@@ -123,7 +126,8 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
 
-        {/* Canva Section */}
+        {/* Canva Section — yalnız Pro istifadəçiləri üçün */}
+        {isPro && (
         <div className="mx-3 mb-2 rounded-xl bg-white/[0.03] border border-white/[0.06] p-3">
           <div className="flex items-center justify-between mb-2.5">
             <CanvaLogo size="sm" className="text-white/80" />
@@ -161,6 +165,7 @@ export const Sidebar: React.FC = () => {
 
           <CanvaPoweredBy className="mt-2.5 justify-center opacity-40" />
         </div>
+        )}
 
         {/* User Profile */}
         <div className="px-3 pb-3">

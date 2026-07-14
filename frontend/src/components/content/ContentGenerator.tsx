@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ContentGenerateRequest, GeneratedContent } from '@/types';
 import { LANGUAGES } from '@/lib/languages';
 import { useLanguageStore } from '@/store/languageStore';
+import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from '@/lib/useTranslation';
 
 export function ContentGenerator() {
@@ -18,6 +19,8 @@ export function ContentGenerator() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'post' | 'reels'>('post');
   const { t } = useTranslation();
+  const user = useAuthStore(s => s.user);
+  const planLabel = user?.plan === 'pro' ? 'FikirBiz Pro' : 'FikirBiz Basic';
 
   const handleGenerate = async () => {
     if (!productServiceTopic.trim()) return;
@@ -132,7 +135,7 @@ export function ContentGenerator() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-brand-navy mb-2">
-            💡 {t('contentTitle')}
+            💡 {planLabel}
           </h1>
           <p className="text-brand-khaki">
             {t('contentDesc')}

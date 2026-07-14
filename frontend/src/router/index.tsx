@@ -10,6 +10,7 @@ import App from '@/App';
 import { LandingPage } from '@/components/landing/LandingPage';
 
 const CustomerDashboard = lazy(() => import('@/components/customer/CustomerDashboard'));
+const ProDashboard = lazy(() => import('@/components/customer/ProDashboard'));
 const AdminDashboard = lazy(() => import('@/components/admin/AdminDashboard'));
 const ContentGenerator = lazy(() => import('@/components/content/ContentGenerator'));
 const ChatInterface = lazy(() => import('@/components/chat/ChatInterface'));
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <LazyLoaded><CustomerDashboard /></LazyLoaded>,
+      },
+      {
+        path: 'pro/dashboard',
+        element: <LazyLoaded><ProDashboard /></LazyLoaded>,
       },
       {
         path: 'chat',

@@ -53,13 +53,13 @@ export const LandingPage: React.FC = () => {
                 {/* Right: Plan Buttons */}
                 <div className="flex flex-col gap-3 sm:pt-2 w-full sm:w-auto">
                   <button
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/login?plan=basic')}
                     className="px-8 py-3 rounded-xl bg-gradient-to-r from-brand-gold to-[#C5A031] text-brand-navy font-semibold text-sm shadow-lg shadow-brand-gold/25 hover:shadow-xl hover:shadow-brand-gold/30 hover:-translate-y-0.5 transition-all duration-200"
                   >
                     FikirBiz Basic
                   </button>
                   <button
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/login?plan=pro')}
                     className="px-8 py-3 rounded-xl border-2 border-brand-navy/10 text-brand-navy font-semibold text-sm hover:border-brand-gold/50 hover:bg-brand-gold/5 hover:-translate-y-0.5 transition-all duration-200"
                   >
                     FikirBiz Pro

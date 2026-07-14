@@ -6,6 +6,7 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   role: 'admin' | 'customer';
+  plan: 'basic' | 'pro';
 }
 
 export interface CustomerProfile {

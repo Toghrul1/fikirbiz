@@ -20,7 +20,7 @@ class TokenService:
     """JWT və refresh token idarəetmə xidməti."""
 
     @staticmethod
-    def create_access_token(user_id: str, role: str, email: str) -> str:
+    def create_access_token(user_id: str, role: str, email: str, plan: str = "basic") -> str:
         """
         JWT access token hazırlayır.
         Müddəti: 1 saat (3600 saniyə).
@@ -30,6 +30,7 @@ class TokenService:
             "sub": user_id,
             "role": role,
             "email": email,
+            "plan": plan,
             "iat": now,
             "exp": now + timedelta(seconds=3600),
         }

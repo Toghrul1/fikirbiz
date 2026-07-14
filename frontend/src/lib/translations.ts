@@ -19,6 +19,7 @@ const translations = {
     hidePassword: 'Hide',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Network error. Please try again.',
     unexpectedError: 'An unexpected error occurred.',
     
@@ -114,6 +115,7 @@ const translations = {
     hidePassword: 'Gizlət',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Şəbəkə xətası. Yenidən cəhd edin.',
     unexpectedError: 'Gözlənilməz xəta baş verdi.',
     
@@ -204,6 +206,7 @@ const translations = {
     hidePassword: 'Gizle',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Ağ hatası. Lütfen tekrar deneyin.',
     unexpectedError: 'Beklenmeyen bir hata oluştu.',
     
@@ -294,6 +297,7 @@ const translations = {
     hidePassword: 'Скрыть',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Ошибка сети. Попробуйте снова.',
     unexpectedError: 'Произошла непредвиденная ошибка.',
     
@@ -384,6 +388,7 @@ const translations = {
     hidePassword: 'إخفاء',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'خطأ في الشبكة. يرجى المحاولة مرة أخرى.',
     unexpectedError: 'حدث خطأ غير متوقع.',
     
@@ -474,6 +479,7 @@ const translations = {
     hidePassword: 'Ausblenden',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Netzwerkfehler. Bitte versuchen Sie es erneut.',
     unexpectedError: 'Ein unerwarteter Fehler ist aufgetreten.',
     
@@ -564,6 +570,7 @@ const translations = {
     hidePassword: 'Masquer',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Erreur réseau. Veuillez réessayer.',
     unexpectedError: "Une erreur inattendue s'est produite.",
     
@@ -654,6 +661,7 @@ const translations = {
     hidePassword: 'Ocultar',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Error de red. Inténtalo de nuevo.',
     unexpectedError: 'Ocurrió un error inesperado.',
     
@@ -744,6 +752,7 @@ const translations = {
     hidePassword: 'Nascondi',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Errore di rete. Riprova.',
     unexpectedError: 'Si è verificato un errore imprevisto.',
     
@@ -834,6 +843,7 @@ const translations = {
     hidePassword: 'Ocultar',
     fikirBizBasicTagline: 'FikirBiz Basic',
     fikirBizProLabel: 'Pro',
+    fikirBizProTagline: 'FikirBiz Pro',
     networkError: 'Erro de rede. Tente novamente.',
     unexpectedError: 'Ocorreu um erro inesperado.',
     

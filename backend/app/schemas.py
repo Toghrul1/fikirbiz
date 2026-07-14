@@ -15,6 +15,7 @@ class RegisterRequest(BaseModel):
     last_name: str = Field(..., max_length=50, min_length=1)
     email: EmailStr = Field(..., max_length=254)
     password: str = Field(..., min_length=8)
+    plan: str = Field(default="basic", max_length=10)
 
 
 class LoginRequest(BaseModel):
@@ -37,6 +38,7 @@ class AuthResponse(BaseModel):
     first_name: str
     last_name: str
     role: str
+    plan: str = "basic"
 
 
 class MessageResponse(BaseModel):

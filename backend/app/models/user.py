@@ -27,6 +27,9 @@ class User(Base):
     role: Mapped[str] = mapped_column(
         String(10), nullable=False, default="customer"
     )
+    plan: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="basic"
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     failed_attempts: Mapped[int] = mapped_column(
         Integer, nullable=False, default=0

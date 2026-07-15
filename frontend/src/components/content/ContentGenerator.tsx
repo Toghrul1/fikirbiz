@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { ContentGenerateRequest, GeneratedContent } from '@/types';
 import { LANGUAGES } from '@/lib/languages';
 import { useLanguageStore } from '@/store/languageStore';
@@ -22,6 +22,7 @@ export function ContentGenerator() {
   const { t } = useTranslation();
   const user = useAuthStore(s => s.user);
   const planLabel = user?.plan === 'pro' ? 'FikirBiz Pro' : 'FikirBiz Basic';
+  const carouselDataRef = useRef(false);
 
   const handleGenerate = async () => {
     if (!productServiceTopic.trim()) return;
@@ -29,6 +30,7 @@ export function ContentGenerator() {
     setIsLoading(true);
     setError(null);
     setGeneratedContent(null);
+    carouselDataRef.current = false;
 
     const request: ContentGenerateRequest = {
       language,
@@ -78,6 +80,9 @@ export function ContentGenerator() {
               const data = line.slice(6);
               if (data === '[DONE]') {
                 setIsLoading(false);
+                if (activeTab === 'carousel' && !carouselDataRef.current) {
+                  setError('Carousel generasiyası hələ aktiv deyil. Backend yenilənir, biraz sonra yenidən cəhd edin.');
+                }
                 return;
               }
               try {
@@ -105,6 +110,9 @@ export function ContentGenerator() {
                         }))
                       : [],
                   };
+                  if (mappedContent.carousel.length > 0) {
+                    carouselDataRef.current = true;
+                  }
                   setGeneratedContent(mappedContent);
                 } else if (parsed.type === 'error') {
                   setError(parsed.data);

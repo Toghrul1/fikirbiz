@@ -14,15 +14,16 @@ export function ContentGenerator() {
   const [targetAudience, setTargetAudience] = useState('');
   const [callToAction, setCallToAction] = useState('');
   const [numCarouselSlides, setNumCarouselSlides] = useState(3);
+  const [numCollageSlots, setNumCollageSlots] = useState(4);
   const [isLoading, setIsLoading] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'post' | 'reels' | 'carousel'>('post');
+  const [activeTab, setActiveTab] = useState<'post' | 'reels' | 'carousel' | 'collage'>('post');
   const { t } = useTranslation();
   const user = useAuthStore(s => s.user);
   const planLabel = user?.plan === 'pro' ? 'FikirBiz Pro' : 'FikirBiz Basic';
-  const carouselDataRef = useRef(false);
+  const contentDataRef = useRef<'carousel' | 'collage' | null>(null);
 
   const handleGenerate = async () => {
     if (!productServiceTopic.trim()) return;
@@ -30,7 +31,7 @@ export function ContentGenerator() {
     setIsLoading(true);
     setError(null);
     setGeneratedContent(null);
-    carouselDataRef.current = false;
+    contentDataRef.current = null;
 
     const request: ContentGenerateRequest = {
       language,
@@ -40,6 +41,7 @@ export function ContentGenerator() {
       targetAudience: targetAudience.trim() || undefined,
       callToAction: callToAction.trim() || undefined,
       numCarouselSlides: activeTab === 'carousel' ? numCarouselSlides : undefined,
+      numCollageSlots: activeTab === 'collage' ? numCollageSlots : undefined,
     };
 
     try {
@@ -55,6 +57,7 @@ export function ContentGenerator() {
           target_audience: request.targetAudience,
           call_to_action: request.callToAction,
           num_carousel_slides: request.numCarouselSlides,
+          num_collage_slots: request.numCollageSlots,
         }),
       });
 
@@ -80,8 +83,10 @@ export function ContentGenerator() {
               const data = line.slice(6);
               if (data === '[DONE]') {
                 setIsLoading(false);
-                if (activeTab === 'carousel' && !carouselDataRef.current) {
+                if (activeTab === 'carousel' && contentDataRef.current !== 'carousel') {
                   setError('Carousel generasiyası hələ aktiv deyil. Backend yenilənir, biraz sonra yenidən cəhd edin.');
+                } else if (activeTab === 'collage' && contentDataRef.current !== 'collage') {
+                  setError('Kollaj generasiyası hələ aktiv deyil. Backend yenilənir, biraz sonra yenidən cəhd edin.');
                 }
                 return;
               }
@@ -90,6 +95,7 @@ export function ContentGenerator() {
                 if (parsed.type === 'content') {
                   const raw = parsed.data;
                   const rawCarousel = raw.carousel;
+                  const rawCollage = raw.collage;
                   const mappedContent: GeneratedContent = {
                     post: {
                       title: raw.post?.title || '',
@@ -109,9 +115,27 @@ export function ContentGenerator() {
                           visualSuggestion: s.visual_suggestion || '',
                         }))
                       : [],
+                    collage: rawCollage && typeof rawCollage === 'object'
+                      ? {
+                          theme: rawCollage.theme || '',
+                          layout: rawCollage.layout || '',
+                          colorPalette: rawCollage.color_palette || '',
+                          slots: Array.isArray(rawCollage.slots)
+                            ? rawCollage.slots.map((s: Record<string, string>) => ({
+                                slotTitle: s.slot_title || '',
+                                photoDescription: s.photo_description || '',
+                                visualStyle: s.visual_style || '',
+                                compositionNotes: s.composition_notes || '',
+                              }))
+                            : [],
+                        }
+                      : null,
                   };
                   if (mappedContent.carousel.length > 0) {
-                    carouselDataRef.current = true;
+                    contentDataRef.current = 'carousel';
+                  }
+                  if (mappedContent.collage && mappedContent.collage.slots.length > 0) {
+                    contentDataRef.current = 'collage';
                   }
                   setGeneratedContent(mappedContent);
                 } else if (parsed.type === 'error') {
@@ -144,6 +168,13 @@ export function ContentGenerator() {
         .map((slide, i) => `--- Slayd ${i + 1} ---\n${slide.title}\n\n${slide.caption}\n\n🖼️ Vizual Təklif:\n${slide.visualSuggestion}`)
         .join('\n\n');
       handleCopy(allText, 'all-carousel');
+    } else if (activeTab === 'collage' && generatedContent.collage) {
+      const c = generatedContent.collage;
+      const slotsText = c.slots
+        .map((s, i) => `--- Slot ${i + 1}: ${s.slotTitle} ---\n📸 Fototəsvir: ${s.photoDescription}\n🎨 Vizual stil: ${s.visualStyle}\n📐 Kompozisiya: ${s.compositionNotes}`)
+        .join('\n\n');
+      const allText = `🎯 Mövzu: ${c.theme}\n📐 Layout: ${c.layout}\n🎨 Rəng Palitrası: ${c.colorPalette}\n\n${slotsText}`;
+      handleCopy(allText, 'all-collage');
     } else if (activeTab === 'post') {
       const fullText = `${generatedContent.post.title}\n\n${generatedContent.post.caption}\n\n🖼️ Vizual Təklif:\n${generatedContent.post.visualSuggestion}\n\n${generatedContent.post.hashtags.map(h => `#${h.replace(/^#+/, '')}`).join(' ')}`;
       handleCopy(fullText, 'all-post');
@@ -199,6 +230,16 @@ export function ContentGenerator() {
               }`}
             >
               🎠 Carousel
+            </button>
+            <button
+              onClick={() => setActiveTab('collage')}
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+                activeTab === 'collage'
+                  ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
+                  : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
+              }`}
+            >
+              🖼️ Kollaj
             </button>
           </div>
 
@@ -293,7 +334,7 @@ export function ContentGenerator() {
               </div>
             </div>
 
-            {/* Carousel Slides Input */}
+            {/* Carousel / Collage Slots Input */}
             {activeTab === 'carousel' && (
               <div className="mb-4">
                 <label className="block text-sm text-brand-khaki mb-1">
@@ -309,6 +350,24 @@ export function ContentGenerator() {
                     className="w-24 px-4 py-3 bg-brand-ivory border border-brand-gray rounded-xl text-brand-navy placeholder-brand-gray focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-center font-semibold text-lg"
                   />
                   <span className="text-sm text-brand-khaki">slayd</span>
+                </div>
+              </div>
+            )}
+            {activeTab === 'collage' && (
+              <div className="mb-4">
+                <label className="block text-sm text-brand-khaki mb-1">
+                  🖼️ Foto slot sayı
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min={2}
+                    max={12}
+                    value={numCollageSlots}
+                    onChange={(e) => setNumCollageSlots(Math.max(2, Math.min(12, parseInt(e.target.value) || 2)))}
+                    className="w-24 px-4 py-3 bg-brand-ivory border border-brand-gray rounded-xl text-brand-navy placeholder-brand-gray focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-center font-semibold text-lg"
+                  />
+                  <span className="text-sm text-brand-khaki">foto</span>
                 </div>
               </div>
             )}
@@ -328,7 +387,7 @@ export function ContentGenerator() {
                   {t('generating')}
                 </span>
               ) : (
-                `✨ ${activeTab === 'carousel' ? `${numCarouselSlides} Slaydlı Carousel Yarat` : t('generateContent')}`
+                `✨ ${activeTab === 'carousel' ? `${numCarouselSlides} Slaydlı Carousel Yarat` : activeTab === 'collage' ? `${numCollageSlots} Fotolu Kollaj Yarat` : t('generateContent')}`
               )}
             </button>
           </div>
@@ -393,7 +452,80 @@ export function ContentGenerator() {
           </div>
         )}
 
-        {generatedContent && activeTab !== 'carousel' && (
+        {generatedContent && activeTab === 'collage' && generatedContent.collage && generatedContent.collage.slots.length > 0 && (
+          <div className="relative z-10 bg-white rounded-2xl shadow-lg border border-brand-gray overflow-hidden">
+            <div className="p-6">
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={handleCopyAll}
+                  className="px-4 py-2 bg-brand-ivory hover:bg-brand-gray text-brand-khaki rounded-lg text-sm font-medium transition-colors"
+                >
+                  {copiedField === 'all-collage' ? `✓ ${t('copied')}` : '📋 Hamısını Kopyala'}
+                </button>
+              </div>
+
+              {/* Collage Header */}
+              <div className="bg-gradient-to-br from-purple-900/10 via-pink-900/5 to-brand-navy/10 rounded-2xl p-6 mb-6 border border-purple-200/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">🖼️</span>
+                  <h2 className="text-xl font-bold text-brand-navy">Kollaj İdeyası</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div className="bg-white/70 rounded-xl p-4">
+                    <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">🎯 Mövzu</span>
+                    <p className="text-brand-navy font-medium mt-1">{generatedContent.collage.theme}</p>
+                  </div>
+                  <div className="bg-white/70 rounded-xl p-4">
+                    <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">📐 Layout</span>
+                    <p className="text-brand-navy font-medium mt-1">{generatedContent.collage.layout}</p>
+                  </div>
+                  <div className="bg-white/70 rounded-xl p-4">
+                    <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">🎨 Rəng Palitrası</span>
+                    <p className="text-brand-navy font-medium mt-1">{generatedContent.collage.colorPalette}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Collage Slots */}
+              <div className="space-y-4">
+                {generatedContent.collage.slots.map((slot, i) => (
+                  <div key={i} className="bg-white border border-brand-gray rounded-xl p-5 hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-sm shadow-md">
+                          {i + 1}
+                        </span>
+                        <h3 className="font-semibold text-brand-navy">{slot.slotTitle}</h3>
+                      </div>
+                      <button
+                        onClick={() => handleCopy(`--- Slot ${i + 1}: ${slot.slotTitle} ---\n📸 ${slot.photoDescription}\n🎨 ${slot.visualStyle}\n📐 ${slot.compositionNotes}`, `collage-${i}`)}
+                        className="text-xs text-brand-gold hover:text-brand-gold transition-colors"
+                      >
+                        {copiedField === `collage-${i}` ? `✓ ${t('copied')}` : t('copy')}
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="bg-brand-ivory rounded-lg p-3">
+                        <span className="text-xs font-semibold text-brand-khaki">📸 Fototəsvir</span>
+                        <p className="text-sm text-brand-navy mt-1">{slot.photoDescription}</p>
+                      </div>
+                      <div className="bg-brand-ivory rounded-lg p-3">
+                        <span className="text-xs font-semibold text-brand-khaki">🎨 Vizual stil</span>
+                        <p className="text-sm text-brand-navy mt-1">{slot.visualStyle}</p>
+                      </div>
+                      <div className="bg-brand-ivory rounded-lg p-3">
+                        <span className="text-xs font-semibold text-brand-khaki">📐 Kompozisiya</span>
+                        <p className="text-sm text-brand-navy mt-1">{slot.compositionNotes}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {generatedContent && activeTab !== 'carousel' && activeTab !== 'collage' && (
           <div className="relative z-10 bg-white rounded-2xl shadow-lg border border-brand-gray overflow-hidden">
             {/* Tabs */}
             <div className="flex border-b border-brand-gray">

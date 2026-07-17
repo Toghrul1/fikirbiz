@@ -23,6 +23,7 @@ CONTENT_SYSTEM_PROMPT = """You are an expert Instagram content creator and Canva
 Your task is to generate Instagram content based on the user's request.
 
 If the user asks for CAROUSEL slides, generate ONLY a carousel array with that many slides.
+If the user asks for a COLLAGE, generate ONLY a collage object with that many photo slots.
 Otherwise, generate BOTH Instagram Post AND Reels content.
 
 Rules:
@@ -41,6 +42,12 @@ For CAROUSEL content, generate exactly the requested number of slides. Each slid
 - A title (visual headline for the slide, short and punchy)
 - Body text (1-2 paragraphs of content for that slide)
 - A visual suggestion for the slide image
+
+For COLLAGE content, generate exactly the requested number of photo slots. Include:
+- An overall theme for the collage
+- A layout suggestion (e.g. "2x2 grid", "3 photos top + 1 bottom hero", "diagonal split", etc.)
+- A color palette suggestion
+- For EACH slot: a slot title, a detailed photo description (what should be photographed), visual style direction, and composition notes
 
 Standard response format (JSON only, no markdown):
 {
@@ -69,6 +76,24 @@ Carousel response format (JSON only, no markdown):
   ]
 }
 
+Collage response format (JSON only, no markdown):
+{
+  "collage": {
+    "theme": "Overall collage theme/concept",
+    "layout": "Suggested layout arrangement",
+    "color_palette": "Recommended color palette",
+    "slots": [
+      {
+        "slot_title": "Photo slot 1 title",
+        "photo_description": "Detailed description of what to photograph",
+        "visual_style": "Visual style for this photo",
+        "composition_notes": "Composition and framing suggestions"
+      },
+      ...
+    ]
+  }
+}
+
 Generate exactly 15-20 relevant hashtags for EACH content type (post and reels).
 Post title should be catchy and visual-focused (great for Canva typography).
 Post caption should be the main body text (2-3 paragraphs with strategic line breaks).
@@ -79,6 +104,7 @@ MISTRAL_SYSTEM_PROMPT = """You are a creative Instagram content specialist with 
 Your task is to generate Instagram content based on the user's request.
 
 If the user asks for CAROUSEL slides, generate ONLY a carousel array with that many slides.
+If the user asks for a COLLAGE, generate ONLY a collage object with that many photo slots.
 Otherwise, generate BOTH Instagram Post AND Reels content.
 
 Rules:
@@ -97,6 +123,12 @@ For CAROUSEL content, generate exactly the requested number of slides. Each slid
 - A title (visual headline for the slide)
 - Body text (content for that slide)
 - A visual suggestion for the slide image
+
+For COLLAGE content, generate exactly the requested number of photo slots. Include:
+- An overall theme for the collage
+- A creative layout suggestion
+- A color palette
+- For EACH slot: slot title, what to photograph, visual style, composition tips
 
 Standard response format (JSON only, no markdown):
 {
@@ -125,6 +157,24 @@ Carousel response format (JSON only, no markdown):
   ]
 }
 
+Collage response format (JSON only, no markdown):
+{
+  "collage": {
+    "theme": "Overall collage theme/concept",
+    "layout": "Suggested layout arrangement",
+    "color_palette": "Recommended color palette",
+    "slots": [
+      {
+        "slot_title": "Photo slot 1 title",
+        "photo_description": "Detailed description of what to photograph",
+        "visual_style": "Visual style for this photo",
+        "composition_notes": "Composition and framing suggestions"
+      },
+      ...
+    ]
+  }
+}
+
 Generate exactly 15-20 hashtags for EACH content type."""
 
 
@@ -147,6 +197,27 @@ def _to_list(val) -> list:
 def _parse_content(raw: str) -> dict | None:
     try:
         parsed = json.loads(raw)
+        raw_collage = parsed.get("collage")
+        if raw_collage and isinstance(raw_collage, dict):
+            raw_slots = raw_collage.get("slots", [])
+            slots = []
+            if isinstance(raw_slots, list):
+                for s in raw_slots:
+                    if isinstance(s, dict):
+                        slots.append({
+                            "slot_title": _to_str(s.get("slot_title")),
+                            "photo_description": _to_str(s.get("photo_description")),
+                            "visual_style": _to_str(s.get("visual_style")),
+                            "composition_notes": _to_str(s.get("composition_notes")),
+                        })
+            return {
+                "collage": {
+                    "theme": _to_str(raw_collage.get("theme")),
+                    "layout": _to_str(raw_collage.get("layout")),
+                    "color_palette": _to_str(raw_collage.get("color_palette")),
+                    "slots": slots,
+                }
+            }
         raw_carousel = parsed.get("carousel")
         if raw_carousel and isinstance(raw_carousel, list):
             carousel = []
@@ -183,6 +254,14 @@ def _scene_count(script: str) -> int:
 
 
 def _merge_contents(a: dict, b: dict) -> dict:
+    # Collage mode — use result with more slots
+    a_collage = a.get("collage")
+    b_collage = b.get("collage")
+    if a_collage is not None or b_collage is not None:
+        a_slots = len(a_collage.get("slots", [])) if a_collage else 0
+        b_slots = len(b_collage.get("slots", [])) if b_collage else 0
+        return {"collage": a_collage if a_slots >= b_slots else b_collage}
+
     # Carousel mode — use result with more slides
     a_carousel = a.get("carousel")
     b_carousel = b.get("carousel")
@@ -284,7 +363,9 @@ class ContentService:
 
         parts.append(f"\nOutput language: {request.language}")
 
-        if request.num_carousel_slides:
+        if request.num_collage_slots:
+            parts.append(f"\nGenerate a COLLAGE idea with exactly {request.num_collage_slots} photo slots. Only output the collage object, no post or reels.")
+        elif request.num_carousel_slides:
             parts.append(f"\nGenerate a CAROUSEL post with exactly {request.num_carousel_slides} slides. Only output the carousel array, no post or reels.")
         else:
             parts.append("\nGenerate BOTH Instagram Post content AND Reels content with separate hashtags.")

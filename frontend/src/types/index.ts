@@ -131,6 +131,7 @@ export interface ContentGenerateRequest {
   targetAudience?: string;
   callToAction?: string;
   numCarouselSlides?: number;
+  numCollageSlots?: number;
 }
 
 export interface InstagramPost {
@@ -152,10 +153,25 @@ export interface CarouselSlide {
   visualSuggestion: string;
 }
 
+export interface CollageSlot {
+  slotTitle: string;
+  photoDescription: string;
+  visualStyle: string;
+  compositionNotes: string;
+}
+
+export interface CollageIdea {
+  theme: string;
+  layout: string;
+  colorPalette: string;
+  slots: CollageSlot[];
+}
+
 export interface GeneratedContent {
   post: InstagramPost;
   reels: InstagramReels;
   carousel: CarouselSlide[];
+  collage: CollageIdea | null;
 }
 
 // --- App Store Types ---

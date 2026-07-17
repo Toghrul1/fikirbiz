@@ -133,6 +133,7 @@ class ContentGenerateRequest(BaseModel):
     target_audience: Optional[str] = Field(None, max_length=500)
     call_to_action: Optional[str] = Field(None, max_length=200)
     num_carousel_slides: Optional[int] = Field(None, ge=1, le=20)
+    num_collage_slots: Optional[int] = Field(None, ge=2, le=12)
 
 
 class InstagramPost(BaseModel):
@@ -154,10 +155,25 @@ class CarouselSlide(BaseModel):
     visual_suggestion: str = ""
 
 
+class CollageSlot(BaseModel):
+    slot_title: str = ""
+    photo_description: str = ""
+    visual_style: str = ""
+    composition_notes: str = ""
+
+
+class CollageIdea(BaseModel):
+    theme: str = ""
+    layout: str = ""
+    color_palette: str = ""
+    slots: list[CollageSlot] = []
+
+
 class GeneratedContent(BaseModel):
     post: InstagramPost
     reels: InstagramReels
     carousel: list[CarouselSlide] = []
+    collage: Optional[CollageIdea] = None
 
 
 class ContentGenerateResponse(BaseModel):

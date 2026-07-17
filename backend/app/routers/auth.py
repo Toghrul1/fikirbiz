@@ -134,7 +134,7 @@ async def login(
     user = result.scalar_one_or_none()
     
     # Dummy hash for timing attack protection if user not found
-    dummy_hash = "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjIQqiRQYq"
+    dummy_hash = "$2b$10$1EGCYWb4gRM2jrhgxEldduWpCO3oK3a/Dk11Gb7Jd9l9z0FulSZMa"
     is_valid = PasswordService.verify_password(body.password, user.password_hash if user else dummy_hash)
     
     if not user or not is_valid:

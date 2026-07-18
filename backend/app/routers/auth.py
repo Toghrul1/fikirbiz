@@ -4,6 +4,7 @@ FikirBiz Backend — Auth Routers.
 Müştəri qeydiyyatı, giriş, token yeniləmə, çıxış və şifrə sıfırlama.
 """
 
+import time as _time
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
@@ -130,18 +131,23 @@ async def login(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Giriş endpointi."""
+    _t0 = _time.perf_counter()
+    
     result = await db.execute(select(User).where(User.email == body.email))
     user = result.scalar_one_or_none()
+    _t1 = _time.perf_counter()
     
     # Dummy hash for timing attack protection if user not found
     dummy_hash = "$2b$10$1EGCYWb4gRM2jrhgxEldduWpCO3oK3a/Dk11Gb7Jd9l9z0FulSZMa"
     is_valid = PasswordService.verify_password(body.password, user.password_hash if user else dummy_hash)
+    _t2 = _time.perf_counter()
     
     if not user or not is_valid:
         if user:
             user.failed_attempts += 1
             if user.failed_attempts >= 5:
                 user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=15)
+        print(f"[TIMING] login fail | db={_t1-_t0:.3f}s bcrypt={_t2-_t1:.3f}s")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"code": "INVALID_CREDENTIALS", "message": "E-poçt ünvanı və ya şifrə yanlışdır"},
@@ -167,6 +173,7 @@ async def login(
     user.failed_attempts = 0
     user.last_login_at = datetime.now(timezone.utc)
     user.locked_until = None
+    _t3 = _time.perf_counter()
     
     access_token = TokenService.create_access_token(user.id, user.role, user.email, user.plan)
     raw_refresh, token_hash = TokenService.create_refresh_token()
@@ -176,8 +183,11 @@ async def login(
         token_hash, 
         expires_days=settings.REFRESH_TOKEN_EXPIRE_DAYS if body.remember_me else 1
     )
+    _t4 = _time.perf_counter()
     
     set_auth_cookies(response, access_token, raw_refresh, remember_me=body.remember_me)
+    
+    print(f"[TIMING] login ok | db={_t1-_t0:.3f}s bcrypt={_t2-_t1:.3f}s user={_t3-_t2:.3f}s token={_t4-_t3:.3f}s total={_t4-_t0:.3f}s")
     
     return AuthResponse(
         id=user.id,

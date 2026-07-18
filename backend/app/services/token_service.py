@@ -77,7 +77,6 @@ class TokenService:
             expires_at=datetime.now(timezone.utc) + timedelta(days=expires_days),
         )
         db.add(rt)
-        await db.flush()
         return rt
 
     @staticmethod
@@ -113,7 +112,6 @@ class TokenService:
             + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
         )
         db.add(new_rt)
-        await db.flush()
 
         return new_raw, new_hash
 
@@ -135,7 +133,6 @@ class TokenService:
         if exclude_token_hash:
             stmt = stmt.where(RefreshToken.token_hash != exclude_token_hash)
         await db.execute(stmt)
-        await db.flush()
 
     @staticmethod
     async def get_valid_refresh_token(

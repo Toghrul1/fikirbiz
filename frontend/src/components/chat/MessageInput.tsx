@@ -171,13 +171,13 @@ export const MessageInput: React.FC = () => {
         </form>
 
         {/* Status Bar */}
-        <div className="mt-2 flex items-center justify-between px-1">
-          <span className="text-[10px] text-brand-navy/30 tracking-wide">
+        <div className="mt-2 flex items-center justify-between px-1 gap-2">
+          <span className="text-[10px] text-brand-navy/30 tracking-wide truncate">
             {connector.status === 'connected'
               ? 'Canva bağlı — dizayn hazırlaya bilərsiniz'
               : 'Canva bağlı deyil — yalnız mətn söhbəti'}
           </span>
-          <span className="text-[10px] text-brand-navy/20 tracking-wide">
+          <span className="text-[10px] text-brand-navy/20 tracking-wide shrink-0 hidden sm:inline">
             Enter göndər • Shift+Enter yeni sətir
           </span>
         </div>

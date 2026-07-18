@@ -67,7 +67,7 @@ export const MessageList: React.FC = () => {
 
           {/* Example prompts */}
           {connector.status === 'connected' && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               {[
                 { title: 'İnstaqram postu', desc: 'Qəhvə dükanı üçün gözəl post hazırla' },
                 { title: 'Təqdimat', desc: 'Biznes təqdimatı slides hazırla' },
@@ -76,7 +76,7 @@ export const MessageList: React.FC = () => {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="p-4 rounded-2xl bg-white/70 backdrop-blur-sm border border-white/60 text-left hover:bg-white/90 hover:border-brand-gold/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                  className="p-3 sm:p-4 rounded-2xl bg-white/70 backdrop-blur-sm border border-white/60 text-left hover:bg-white/90 hover:border-brand-gold/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
                 >
                   <p className="text-sm font-semibold text-brand-navy">{item.title}</p>
                   <p className="text-xs text-brand-khaki/60 mt-1">{item.desc}</p>

@@ -38,7 +38,7 @@ export const ForgotPasswordForm: React.FC = () => {
       <div className="absolute top-4 right-4">
         <LanguageSwitcher value={language} onChange={setLanguage} />
       </div>
-      <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md p-8">
+      <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md p-6 sm:p-8">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-medium text-brand-navy">{t('forgotPasswordTitle')}</h2>
           <p className="mt-2 text-sm text-brand-khaki">
@@ -51,10 +51,10 @@ export const ForgotPasswordForm: React.FC = () => {
             <div className="p-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md text-center" aria-live="polite">
               {successMsg}
             </div>
-            <Link
-              to="/login"
-              className="flex w-full justify-center rounded-md bg-brand-navy px-4 py-2 text-sm font-medium text-brand-white hover:bg-[#162a40] transition-colors"
-            >
+          <Link
+            to="/login"
+            className="flex w-full justify-center rounded-md bg-brand-navy px-4 py-2.5 sm:py-2 text-sm font-medium text-brand-white hover:bg-[#162a40] transition-colors"
+          >
               {t('backToLogin')}
             </Link>
           </div>

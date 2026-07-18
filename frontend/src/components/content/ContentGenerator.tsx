@@ -200,46 +200,50 @@ export function ContentGenerator() {
         {/* Form Card */}
         <div className="relative z-10 bg-white rounded-2xl shadow-lg p-6 mb-6 border border-brand-gray">
           {/* Content Type Tabs */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-none -mx-2 px-2 snap-x snap-mandatory">
             <button
               onClick={() => setActiveTab('post')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+              className={`snap-start shrink-0 flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
                 activeTab === 'post'
                   ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
                   : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
               }`}
             >
-              📸 {t('instagramPost')}
+              <span className="sm:hidden">📸</span>
+              <span className="hidden sm:inline">📸 {t('instagramPost')}</span>
             </button>
             <button
               onClick={() => setActiveTab('reels')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+              className={`snap-start shrink-0 flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
                 activeTab === 'reels'
                   ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
                   : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
               }`}
             >
-              🎬 {t('instagramReels')}
+              <span className="sm:hidden">🎬</span>
+              <span className="hidden sm:inline">🎬 {t('instagramReels')}</span>
             </button>
             <button
               onClick={() => setActiveTab('carousel')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+              className={`snap-start shrink-0 flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
                 activeTab === 'carousel'
                   ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
                   : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
               }`}
             >
-              🎠 Carousel
+              <span className="sm:hidden">🎠</span>
+              <span className="hidden sm:inline">🎠 Carousel</span>
             </button>
             <button
               onClick={() => setActiveTab('collage')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+              className={`snap-start shrink-0 flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
                 activeTab === 'collage'
                   ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
                   : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray/30'
               }`}
             >
-              🖼️ Kollaj
+              <span className="sm:hidden">🖼️</span>
+              <span className="hidden sm:inline">🖼️ Kollaj</span>
             </button>
           </div>
 
@@ -267,7 +271,7 @@ export function ContentGenerator() {
               <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">{t('productDetails')}</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-sm text-brand-khaki mb-1">
                   {t('productTopic')} <span className="text-red-500">{t('required')}</span>
@@ -307,7 +311,7 @@ export function ContentGenerator() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm text-brand-khaki mb-1">
                   {t('targetAudience')} <span className="text-brand-gray">{t('optional')}</span>
@@ -431,7 +435,7 @@ export function ContentGenerator() {
                       </button>
                     </div>
 
-                    <h3 className="text-xl font-bold text-brand-gold mb-3">
+                    <h3 className="text-lg sm:text-xl font-bold text-brand-gold mb-3">
                       {slide.title}
                     </h3>
 
@@ -470,7 +474,7 @@ export function ContentGenerator() {
                   <span className="text-2xl">🖼️</span>
                   <h2 className="text-xl font-bold text-brand-navy">Kollaj İdeyası</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-4">
                   <div className="bg-white/70 rounded-xl p-4">
                     <span className="text-xs font-semibold text-brand-khaki uppercase tracking-wide">🎯 Mövzu</span>
                     <p className="text-brand-navy font-medium mt-1">{generatedContent.collage.theme}</p>
@@ -504,7 +508,7 @@ export function ContentGenerator() {
                         {copiedField === `collage-${i}` ? `✓ ${t('copied')}` : t('copy')}
                       </button>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                       <div className="bg-brand-ivory rounded-lg p-3">
                         <span className="text-xs font-semibold text-brand-khaki">📸 Fototəsvir</span>
                         <p className="text-sm text-brand-navy mt-1">{slot.photoDescription}</p>
@@ -531,23 +535,25 @@ export function ContentGenerator() {
             <div className="flex border-b border-brand-gray">
               <button
                 onClick={() => setActiveTab('post')}
-                className={`flex-1 py-4 px-6 font-semibold text-sm transition-colors ${
+                className={`flex-1 py-3 sm:py-4 px-3 sm:px-6 font-semibold text-xs sm:text-sm transition-colors ${
                   activeTab === 'post'
                     ? 'bg-brand-gold text-white'
                     : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray'
                 }`}
               >
-                📸 {t('instagramPost')}
+                <span className="sm:hidden">📸 Post</span>
+                <span className="hidden sm:inline">📸 {t('instagramPost')}</span>
               </button>
               <button
                 onClick={() => setActiveTab('reels')}
-                className={`flex-1 py-4 px-6 font-semibold text-sm transition-colors ${
+                className={`flex-1 py-3 sm:py-4 px-3 sm:px-6 font-semibold text-xs sm:text-sm transition-colors ${
                   activeTab === 'reels'
                     ? 'bg-brand-gold text-white'
                     : 'bg-brand-ivory text-brand-khaki hover:bg-brand-gray'
                 }`}
               >
-                🎬 {t('instagramReels')}
+                <span className="sm:hidden">🎬 Reels</span>
+                <span className="hidden sm:inline">🎬 {t('instagramReels')}</span>
               </button>
             </div>
 

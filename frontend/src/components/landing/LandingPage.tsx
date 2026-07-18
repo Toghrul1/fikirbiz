@@ -7,9 +7,9 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F5F1EB] via-[#EFE7DC] to-[#E8DDD0] font-sans text-brand-navy flex flex-col">
       {/* Top Banner */}
-      <div className="bg-brand-navy/95 text-white text-xs py-3 px-6 flex items-center justify-between backdrop-blur-sm">
-        <span className="font-bold tracking-[0.2em] text-sm">FIKIRBIZ</span>
-        <span className="text-white/60">Süni intellekt sürəti, İnsan toxunuşu</span>
+      <div className="bg-brand-navy/95 text-white text-xs py-3 px-4 sm:px-6 flex items-center justify-between backdrop-blur-sm gap-2">
+        <span className="font-bold tracking-[0.2em] text-xs sm:text-sm shrink-0">FIKIRBIZ</span>
+        <span className="text-white/60 text-[10px] sm:text-xs text-right leading-tight">Süni intellekt sürəti, İnsan toxunuşu</span>
       </div>
 
       {/* Main Content */}
@@ -18,7 +18,7 @@ export const LandingPage: React.FC = () => {
           {/* Left: Logo Card */}
           <div className="flex justify-center animate-in fade-in slide-in-from-left duration-700">
             <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-[0_8px_40px_rgba(13,27,42,0.08)] border border-white/60 p-6 sm:p-8 w-full max-w-md">
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8">
                 {/* Left: Logo + Social */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="bg-brand-navy w-28 h-28 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-navy/20 ring-1 ring-white/10">
@@ -111,7 +111,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Trust indicators */}
-            <div className="flex items-center gap-6 mt-4 text-xs text-brand-khaki/50">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 text-xs text-brand-khaki/50">
               <div className="flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

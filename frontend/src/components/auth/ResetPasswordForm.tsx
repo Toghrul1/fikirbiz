@@ -83,7 +83,7 @@ export const ResetPasswordForm: React.FC = () => {
         <div className="absolute top-4 right-4">
           <LanguageSwitcher value={language} onChange={setLanguage} />
         </div>
-        <div className="w-full max-w-md rounded-lg bg-brand-white shadow-md p-8 text-center space-y-6">
+        <div className="w-full max-w-md rounded-lg bg-brand-white shadow-md p-6 sm:p-8 text-center space-y-6">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -107,7 +107,7 @@ export const ResetPasswordForm: React.FC = () => {
       <div className="absolute top-4 right-4">
         <LanguageSwitcher value={language} onChange={setLanguage} />
       </div>
-      <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md p-8">
+      <div className="w-full max-w-md overflow-hidden rounded-lg bg-brand-white shadow-md p-6 sm:p-8">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-medium text-brand-navy">{t('resetPasswordTitle')}</h2>
           <p className="mt-2 text-sm text-brand-khaki">

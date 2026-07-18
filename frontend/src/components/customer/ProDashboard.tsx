@@ -27,24 +27,27 @@ export function ProDashboard() {
       <div className={`min-h-screen bg-brand-ivory ${activeTab === 'chat' ? 'md:ml-64' : ''}`}>
         {activeTab === 'chat' ? (
           <>
-            <div className="flex gap-2 px-4 pt-4 pb-0">
+            <div className="flex gap-1.5 sm:gap-2 px-4 pt-4 pb-0 overflow-x-auto scrollbar-none">
               <button
                 onClick={() => setActiveTab('content')}
-                className="flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
+                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
               >
-                ✨ {t('contentTitle')}
+                <span className="sm:hidden">✨ Məzmun</span>
+                <span className="hidden sm:inline">✨ {t('contentTitle')}</span>
               </button>
               <button
                 onClick={() => setActiveTab('chat')}
-                className="flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15"
+                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15"
               >
-                💬 AI Chat
+                <span className="sm:hidden">💬 Chat</span>
+                <span className="hidden sm:inline">💬 AI Chat</span>
               </button>
               <button
                 onClick={() => setActiveTab('canva')}
-                className="flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
+                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
               >
-                🎨 Canva Connect
+                <span className="sm:hidden">🎨 Canva</span>
+                <span className="hidden sm:inline">🎨 Canva Connect</span>
               </button>
             </div>
             <main className="flex flex-1 flex-col relative w-full min-w-0 overflow-hidden">
@@ -76,40 +79,43 @@ export function ProDashboard() {
         ) : (
           <div className="max-w-5xl mx-auto px-4 py-6">
             <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-brand-navy mb-2">💼 FikirBiz Pro</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-brand-navy mb-2">💼 FikirBiz Pro</h1>
               <p className="text-brand-khaki">{t('contentDesc')}</p>
             </div>
 
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-1.5 sm:gap-2 mb-6 overflow-x-auto scrollbar-none -mx-2 px-2">
               <button
                 onClick={() => setActiveTab('content')}
-                className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
                   activeTab === 'content'
                     ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
                     : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
                 }`}
               >
-                ✨ {t('contentTitle')}
+                <span className="sm:hidden">✨ Məzmun</span>
+                <span className="hidden sm:inline">✨ {t('contentTitle')}</span>
               </button>
               <button
                 onClick={() => setActiveTab('chat')}
-                className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
                   activeTab === 'chat'
                     ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
                     : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
                 }`}
               >
-                💬 AI Chat
+                <span className="sm:hidden">💬 Chat</span>
+                <span className="hidden sm:inline">💬 AI Chat</span>
               </button>
               <button
                 onClick={() => setActiveTab('canva')}
-                className={`flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition-all ${
+                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
                   activeTab === 'canva'
                     ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
                     : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
                 }`}
               >
-                🎨 Canva Connect
+                <span className="sm:hidden">🎨 Canva</span>
+                <span className="hidden sm:inline">🎨 Canva Connect</span>
               </button>
             </div>
 

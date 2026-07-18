@@ -57,23 +57,20 @@ export const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-brand-ivory">
       <header className="bg-brand-navy text-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-light">
+          <div className="flex justify-between items-center h-16 gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-light shrink-0">
                 <span>Fikir</span><span className="text-brand-gold font-medium">Biz</span>
               </h1>
-              <span className="bg-brand-gold text-brand-navy text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+              <span className="bg-brand-gold text-brand-navy text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded uppercase tracking-wider shrink-0">
                 {t('admin')}
               </span>
-              <span className="bg-white/15 text-brand-gold text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
-                {t('fikirBizProLabel')}
-              </span>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-medium">{user?.firstName} {user?.lastName}</span>
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+              <span className="text-xs sm:text-sm font-medium truncate max-w-[120px] sm:max-w-none">{user?.firstName} {user?.lastName}</span>
               <button 
                 onClick={logout}
-                className="text-brand-gray hover:text-white transition-colors"
+                className="text-brand-gray hover:text-white transition-colors text-xs sm:text-sm"
               >
                 {t('logout')}
               </button>
@@ -84,7 +81,7 @@ export const AdminDashboard: React.FC = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {analytics && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-8">
             <div className="bg-white rounded-lg shadow-sm p-6 border border-brand-gray/30 border-l-4 border-l-brand-gold">
               <h3 className="text-sm font-medium text-brand-khaki uppercase tracking-wider">{t('totalCustomers')}</h3>
               <p className="mt-2 text-3xl font-bold text-brand-navy">{analytics.total_users}</p>

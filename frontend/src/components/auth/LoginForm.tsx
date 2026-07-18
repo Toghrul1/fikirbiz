@@ -91,7 +91,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
 </p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-[0_8px_40px_rgba(13,27,42,0.06)] border border-white/60 p-8">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-[0_8px_40px_rgba(13,27,42,0.06)] border border-white/60 p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="p-3.5 text-sm text-red-600 bg-red-50/80 backdrop-blur-sm rounded-xl border border-red-200/50 flex items-start gap-2" aria-live="polite">

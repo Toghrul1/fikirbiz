@@ -2,6 +2,7 @@
 FikirBiz Backend — Main Entry Point.
 """
 
+import time as _time
 import traceback
 from contextlib import asynccontextmanager
 
@@ -19,12 +20,16 @@ from app.routers import admin, auth, auth_canva, canva, chat, content, customer
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    try:
-        await create_tables()
-        print("Database tables created successfully")
-    except Exception as e:
-        print(f"Database init warning: {e}")
+    _t0 = _time.perf_counter()
+    if settings.DEBUG:
+        try:
+            await create_tables()
+            print("Database tables created successfully")
+        except Exception as e:
+            print(f"Database init warning: {e}")
 
+    _t1 = _time.perf_counter()
+    print(f"[TIMING] startup took {_t1-_t0:.3f}s")
     yield
 
 

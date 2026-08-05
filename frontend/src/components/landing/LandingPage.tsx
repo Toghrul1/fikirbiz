@@ -163,22 +163,6 @@ export const LandingPage: React.FC = () => {
                 {t('registerCta')}
               </button>
             </div>
-
-            {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 text-xs text-brand-khaki/50">
-              <div className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {t('trustPaidCanva')}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-                {t('trustUsers')}
-              </div>
-            </div>
           </div>
         </div>
       </main>

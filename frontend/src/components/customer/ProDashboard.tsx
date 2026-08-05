@@ -169,7 +169,7 @@ export function ProDashboard() {
                   {connector.status === 'connected' && (
                     <div className="mt-6 p-4 bg-brand-ivory rounded-xl">
                       <p className="text-sm text-brand-khaki text-center">
-                        Canva uğurla bağlandı! Canva dizaynlarınızı yaratmaq üçün AI Chat səhifəsinə keçin.
+                        Canva uğurla bağlandı! Canva dizaynlarınızı hazırlamaq üçün AI Chat səhifəsinə keçin.
                       </p>
                     </div>
                   )}

@@ -55,6 +55,19 @@ const translations = {
     // Content Generator
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Generate professional Instagram posts & Reels content in seconds.',
+    
+    // Image Generator
+    imageTitle: 'AI Image Generator',
+    imageDesc: 'Describe an image and generate it with AI (FLUX.1 by Black Forest Labs via Cloudflare).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'e.g. A modern minimalist coffee shop interior, warm light',
+    imagePromptHint: 'Minimum 3, maximum 2000 characters.',
+    generateImage: 'Generate Image',
+    generatingImage: 'Generating image...',
+    imageError: 'Image could not be generated. Please try again in a moment.',
+    imageQuotaExceeded: 'Your daily image limit is used up. Please try again tomorrow.',
+    imageDownload: 'Download',
+    imageGenerateAnother: 'Generate Another',
     language: 'Language',
     productDetails: 'Product / Service Details',
     productTopic: 'Product / Service / Topic',
@@ -173,6 +186,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Peşəkar Instagram post və Reels məzmununu saniyələr içində hazırlayın.',
+    
+    // Image Generator
+    imageTitle: 'AI Şəkil Yaratma',
+    imageDesc: 'Şəkli təsvir edin və AI ilə yaradın (Cloudflare üzərindən FLUX.1).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'Məsələn: Müasir minimalist kofe dükanının interyeri, isti işıq',
+    imagePromptHint: 'Minimum 3, maksimum 2000 simvol.',
+    generateImage: 'Şəkil Yarat',
+    generatingImage: 'Şəkil yaradılır...',
+    imageError: 'Şəkil yaratmaq mümkün olmadı. Bir az sonra yenidən cəhd edin.',
+    imageQuotaExceeded: 'Gündəlik şəkil limitiniz bitdi. Sabah yenidən cəhd edin.',
+    imageDownload: 'Yüklə',
+    imageGenerateAnother: 'Yeni Şəkil Yarat',
     language: 'Dil',
     productDetails: 'Məhsul / Xidmət Detalları',
     productTopic: 'Məhsul / Xidmət / Mövzu',
@@ -290,6 +316,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Profesyonel Instagram gönderileri ve Reels içeriğini saniyeler içinde oluşturun.',
+    
+    // Image Generator
+    imageTitle: 'AI Görsel Oluşturucu',
+    imageDesc: 'Bir görseli tanımlayın ve yapay zeka ile oluşturun (Cloudflare üzerinden FLUX.1).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'örn. Modern minimalist kahve dükkanı iç mekanı, sıcak ışık',
+    imagePromptHint: 'En az 3, en fazla 2000 karakter.',
+    generateImage: 'Görsel Oluştur',
+    generatingImage: 'Görsel oluşturuluyor...',
+    imageError: 'Görsel oluşturulamadı. Lütfen biraz sonra tekrar deneyin.',
+    imageQuotaExceeded: 'Günlük görsel limitiniz doldu. Lütfen yarın tekrar deneyin.',
+    imageDownload: 'İndir',
+    imageGenerateAnother: 'Yeni Görsel Oluştur',
     language: 'Dil',
     productDetails: 'Ürün / Hizmet Detayları',
     productTopic: 'Ürün / Hizmet / Konu',
@@ -407,6 +446,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Создавайте профессиональные посты и Reels для Instagram за секунды.',
+    
+    // Image Generator
+    imageTitle: 'Генератор изображений ИИ',
+    imageDesc: 'Опишите изображение и создайте его с помощью ИИ (FLUX.1 через Cloudflare).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'напр. Интерьер современной минималистичной кофейни, тёплый свет',
+    imagePromptHint: 'Минимум 3, максимум 2000 символов.',
+    generateImage: 'Создать изображение',
+    generatingImage: 'Создание изображения...',
+    imageError: 'Не удалось создать изображение. Попробуйте ещё раз чуть позже.',
+    imageQuotaExceeded: 'Ваш дневной лимит изображений исчерпан. Попробуйте завтра.',
+    imageDownload: 'Скачать',
+    imageGenerateAnother: 'Создать другое',
     language: 'Язык',
     productDetails: 'Детали продукта / услуги',
     productTopic: 'Продукт / Услуга / Тема',
@@ -524,6 +576,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'إنشاء منشورات Instagram و Reels احترافية في ثوانٍ.',
+    
+    // Image Generator
+    imageTitle: 'مولّد الصور بالذكاء الاصطناعي',
+    imageDesc: 'صف الصورة وأنشئها بالذكاء الاصطناعي (FLUX.1 عبر Cloudflare).',
+    imagePrompt: 'الوصف',
+    imagePromptPlaceholder: 'مثال: داخل مقهى عصري بسيط، إضاءة دافئة',
+    imagePromptHint: 'الحد الأدنى 3، والحد الأقصى 2000 حرف.',
+    generateImage: 'إنشاء الصورة',
+    generatingImage: 'جاري إنشاء الصورة...',
+    imageError: 'تعذر إنشاء الصورة. يرجى المحاولة مرة أخرى لاحقاً.',
+    imageQuotaExceeded: 'لقد استنفدت حد الصور اليومي. حاول غداً.',
+    imageDownload: 'تحميل',
+    imageGenerateAnother: 'إنشاء صورة أخرى',
     language: 'اللغة',
     productDetails: 'تفاصيل المنتج / الخدمة',
     productTopic: 'المنتج / الخدمة / الموضوع',
@@ -641,6 +706,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Erstellen Sie professionelle Instagram-Posts und Reels in Sekunden.',
+    
+    // Image Generator
+    imageTitle: 'KI-Bildgenerator',
+    imageDesc: 'Beschreiben Sie ein Bild und lassen Sie es per KI erstellen (FLUX.1 über Cloudflare).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'z. B. Innenraum eines modernen minimalistischen Cafés, warmes Licht',
+    imagePromptHint: 'Mindestens 3, maximal 2000 Zeichen.',
+    generateImage: 'Bild erstellen',
+    generatingImage: 'Bild wird erstellt...',
+    imageError: 'Bild konnte nicht erstellt werden. Bitte versuchen Sie es gleich erneut.',
+    imageQuotaExceeded: 'Ihr Tageslimit für Bilder ist aufgebraucht. Versuchen Sie es morgen erneut.',
+    imageDownload: 'Herunterladen',
+    imageGenerateAnother: 'Neues Bild erstellen',
     language: 'Sprache',
     productDetails: 'Produkt / Service Details',
     productTopic: 'Produkt / Service / Thema',
@@ -758,6 +836,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Créez des posts Instagram et Reels professionnels en quelques secondes.',
+    
+    // Image Generator
+    imageTitle: 'Générateur d\'images IA',
+    imageDesc: 'Décrivez une image et générez-la avec l\'IA (FLUX.1 via Cloudflare).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'ex. Intérieur d\'un café moderne minimaliste, lumière chaude',
+    imagePromptHint: '3 caractères minimum, 2000 maximum.',
+    generateImage: 'Générer l\'image',
+    generatingImage: 'Génération de l\'image...',
+    imageError: 'Impossible de générer l\'image. Réessayez dans un instant.',
+    imageQuotaExceeded: 'Votre limite quotidienne d\'images est épuisée. Réessayez demain.',
+    imageDownload: 'Télécharger',
+    imageGenerateAnother: 'Générer une autre',
     language: 'Langue',
     productDetails: 'Détails du produit / service',
     productTopic: 'Produit / Service / Sujet',
@@ -875,6 +966,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Crea publicaciones profesionales de Instagram y Reels en segundos.',
+    
+    // Image Generator
+    imageTitle: 'Generador de imágenes IA',
+    imageDesc: 'Describe una imagen y genérala con IA (FLUX.1 vía Cloudflare).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'p. ej. Interior de una cafetería minimalista moderna, luz cálida',
+    imagePromptHint: 'Mínimo 3, máximo 2000 caracteres.',
+    generateImage: 'Generar imagen',
+    generatingImage: 'Generando imagen...',
+    imageError: 'No se pudo generar la imagen. Inténtalo de nuevo en un momento.',
+    imageQuotaExceeded: 'Tu límite diario de imágenes se agotó. Inténtalo mañana.',
+    imageDownload: 'Descargar',
+    imageGenerateAnother: 'Generar otra',
     language: 'Idioma',
     productDetails: 'Detalles del producto / servicio',
     productTopic: 'Producto / Servicio / Tema',
@@ -992,6 +1096,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Crea post Instagram e Reels professionali in pochi secondi.',
+    
+    // Image Generator
+    imageTitle: 'Generatore di immagini IA',
+    imageDesc: 'Descrivi un\'immagine e creala con l\'IA (FLUX.1 tramite Cloudflare).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'es. Interno di un caffè moderno minimalista, luce calda',
+    imagePromptHint: 'Minimo 3, massimo 2000 caratteri.',
+    generateImage: 'Genera immagine',
+    generatingImage: 'Generazione immagine...',
+    imageError: 'Impossibile generare l\'immagine. Riprova tra poco.',
+    imageQuotaExceeded: 'Il tuo limite giornaliero di immagini è esaurito. Riprova domani.',
+    imageDownload: 'Scarica',
+    imageGenerateAnother: 'Genera un\'altra',
     language: 'Lingua',
     productDetails: 'Dettagli prodotto / servizio',
     productTopic: 'Prodotto / Servizio / Argomento',
@@ -1109,6 +1226,19 @@ const translations = {
     
     contentTitle: 'FikirBiz Basic',
     contentDesc: 'Crie posts profissionais do Instagram e Reels em segundos.',
+    
+    // Image Generator
+    imageTitle: 'Gerador de imagens IA',
+    imageDesc: 'Descreva uma imagem e gere com IA (FLUX.1 via Cloudflare).',
+    imagePrompt: 'Prompt',
+    imagePromptPlaceholder: 'ex. Interior de um café moderno minimalista, luz quente',
+    imagePromptHint: 'Mínimo 3, máximo 2000 caracteres.',
+    generateImage: 'Gerar imagem',
+    generatingImage: 'Gerando imagem...',
+    imageError: 'Não foi possível gerar a imagem. Tente novamente em instantes.',
+    imageQuotaExceeded: 'Seu limite diário de imagens acabou. Tente amanhã.',
+    imageDownload: 'Baixar',
+    imageGenerateAnother: 'Gerar outra',
     language: 'Idioma',
     productDetails: 'Detalhes do produto / serviço',
     productTopic: 'Produto / Serviço / Tópico',

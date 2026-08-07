@@ -7,5 +7,6 @@ from app.models.refresh_token import RefreshToken
 from app.models.password_reset import PasswordReset
 from app.models.audit_log import AuditLog
 from app.models.canva_connection import CanvaConnection
+from app.models.image_generation import ImageGeneration
 
-__all__ = ["User", "RefreshToken", "PasswordReset", "AuditLog", "CanvaConnection"]
+__all__ = ["User", "RefreshToken", "PasswordReset", "AuditLog", "CanvaConnection", "ImageGeneration"]

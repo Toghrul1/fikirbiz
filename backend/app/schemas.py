@@ -180,3 +180,11 @@ class ContentGenerateResponse(BaseModel):
     success: bool
     content: GeneratedContent
     language: str
+
+
+# ─── Image Generation Schemas ────────────────────────────────────────
+
+class ImageGenerateRequest(BaseModel):
+    # Uzunluq validasiyası endpoint daxilində aparılır ki,
+    # səhvlər 422 əvəzinə 400 qaytarsın (mövcud convention).
+    prompt: str

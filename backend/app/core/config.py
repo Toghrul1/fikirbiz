@@ -44,6 +44,12 @@ class Settings(BaseSettings):
     MISTRAL_API_KEY: Optional[str] = None
     MISTRAL_MODEL: str = "mistral-large-latest"
 
+    # Cloudflare Workers AI (FLUX.1 schnell image generation)
+    CLOUDFLARE_API_TOKEN: Optional[str] = None
+    CLOUDFLARE_ACCOUNT_ID: Optional[str] = None
+    CLOUDFLARE_IMAGE_MODEL: str = "@cf/black-forest-labs/flux-1-schnell"
+    FREE_IMAGE_GENERATIONS_PER_DAY: int = 5
+
     # App
     FRONTEND_URL: str = "http://localhost:5173"
     BACKEND_URL: str = "http://localhost:8000"

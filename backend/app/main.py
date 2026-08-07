@@ -15,7 +15,7 @@ from slowapi.errors import RateLimitExceeded
 from app.core.config import settings
 from app.core.database import create_tables
 from app.core.limiter import limiter
-from app.routers import admin, auth, auth_canva, canva, chat, content, customer
+from app.routers import admin, auth, auth_canva, canva, chat, content, customer, images
 
 
 @asynccontextmanager
@@ -80,6 +80,7 @@ app.include_router(chat.router)
 app.include_router(content.router)
 app.include_router(auth_canva.router)
 app.include_router(canva.router)
+app.include_router(images.router)
 
 
 @app.get("/health")

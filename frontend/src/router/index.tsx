@@ -13,6 +13,7 @@ const CustomerDashboard = lazy(() => import('@/components/customer/CustomerDashb
 const ProDashboard = lazy(() => import('@/components/customer/ProDashboard'));
 const AdminDashboard = lazy(() => import('@/components/admin/AdminDashboard'));
 const ContentGenerator = lazy(() => import('@/components/content/ContentGenerator'));
+const ImageGenerator = lazy(() => import('@/components/images/ImageGenerator'));
 
 function LazyLoaded({ children }: { children: React.ReactNode }) {
   return (
@@ -78,6 +79,10 @@ export const router = createBrowserRouter([
       {
         path: 'content',
         element: <LazyLoaded><ContentGenerator /></LazyLoaded>,
+      },
+      {
+        path: 'images',
+        element: <LazyLoaded><ImageGenerator /></LazyLoaded>,
       }
     ]
   },

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ContentGenerator } from '../content/ContentGenerator';
+import { ImageGenerator } from '../images/ImageGenerator';
 import { MessageList } from '../chat/MessageList';
 import { MessageInput } from '../chat/MessageInput';
 import { Sidebar } from '../chat/Sidebar';
@@ -8,7 +9,7 @@ import { CanvaLogo, CanvaPoweredBy } from '../canva/CanvaLogo';
 import { useTranslation } from '@/lib/useTranslation';
 
 export function ProDashboard() {
-  const [activeTab, setActiveTab] = useState<'content' | 'chat' | 'canva'>('chat');
+  const [activeTab, setActiveTab] = useState<'content' | 'chat' | 'canva' | 'images'>('chat');
   const { toggleSidebar, connector, initiateCanvaAuth, disconnectCanva, designs } = useAppStore();
   const { t } = useTranslation();
 
@@ -48,6 +49,13 @@ export function ProDashboard() {
               >
                 <span className="sm:hidden">🎨 Canva</span>
                 <span className="hidden sm:inline">🎨 Canva Connect</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('images')}
+                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
+              >
+                <span className="sm:hidden">🖼️ Şəkil</span>
+                <span className="hidden sm:inline">🖼️ Şəkil</span>
               </button>
             </div>
             <main className="flex flex-1 flex-col relative w-full min-w-0 overflow-hidden">
@@ -117,11 +125,28 @@ export function ProDashboard() {
                 <span className="sm:hidden">🎨 Canva</span>
                 <span className="hidden sm:inline">🎨 Canva Connect</span>
               </button>
+              <button
+                onClick={() => setActiveTab('images')}
+                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
+                  activeTab === 'images'
+                    ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
+                    : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
+                }`}
+              >
+                <span className="sm:hidden">🖼️ Şəkil</span>
+                <span className="hidden sm:inline">🖼️ Şəkil</span>
+              </button>
             </div>
 
             {activeTab === 'content' && (
               <div className="px-4">
                 <ContentGenerator />
+              </div>
+            )}
+
+            {activeTab === 'images' && (
+              <div className="px-4">
+                <ImageGenerator />
               </div>
             )}
 

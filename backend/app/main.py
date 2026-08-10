@@ -15,7 +15,7 @@ from slowapi.errors import RateLimitExceeded
 from app.core.config import settings
 from app.core.database import create_tables
 from app.core.limiter import limiter
-from app.routers import admin, auth, auth_canva, canva, chat, content, customer, images
+from app.routers import admin, admin_auth, auth, auth_canva, canva, chat, content, customer, images
 
 
 @asynccontextmanager
@@ -74,6 +74,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Routers
 app.include_router(auth.router)
+app.include_router(admin_auth.router)
 app.include_router(admin.router)
 app.include_router(customer.router)
 app.include_router(chat.router)

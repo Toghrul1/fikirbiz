@@ -25,12 +25,15 @@ class User(Base):
     )
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     role: Mapped[str] = mapped_column(
-        String(10), nullable=False, default="customer"
+        String(10), nullable=False, default="user"
     )
     plan: Mapped[str] = mapped_column(
         String(10), nullable=False, default="basic"
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    is_approved: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=text("false")
+    )
     failed_attempts: Mapped[int] = mapped_column(
         Integer, nullable=False, default=0
     )

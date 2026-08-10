@@ -45,7 +45,8 @@ axiosInstance.interceptors.response.use(
         } else {
           // Token yenilənmədi, logout/login səhifəsinə göndəririk
           store.setRedirectAfterLogin(window.location.pathname);
-          window.location.href = '/login';
+          const isAdminRoute = originalRequest.url?.startsWith('/api/admin');
+          window.location.href = isAdminRoute ? '/admin/login' : '/login';
           return Promise.reject(error);
         }
       } catch (e) {

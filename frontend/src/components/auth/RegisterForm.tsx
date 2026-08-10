@@ -11,17 +11,7 @@ export const RegisterForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const [globalError, setGlobalError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<any>({});
-  
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-  const { language, setLanguage } = useLanguageStore();
-
-  const params = new URLSearchParams(window.location.search);
-  const planFromUrl = params.get('plan') || 'basic';
+  const [isSuccessPending, setIsSuccessPending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +21,7 @@ export const RegisterForm: React.FC = () => {
 
     try {
       const { axiosInstance } = await import('@/lib/axiosInstance');
-      const res = await axiosInstance.post('/api/auth/register', {
+      await axiosInstance.post('/api/auth/register', {
         first_name: firstName,
         last_name: lastName,
         email,
@@ -39,17 +29,7 @@ export const RegisterForm: React.FC = () => {
         plan: planFromUrl,
       });
 
-      const { useAuthStore } = await import('@/store/authStore');
-      useAuthStore.getState().setUser({
-        id: res.data.id,
-        email: res.data.email,
-        firstName: res.data.first_name,
-        lastName: res.data.last_name,
-        role: res.data.role,
-        plan: res.data.plan || 'basic',
-      });
-
-      navigate(planFromUrl === 'pro' ? '/customer/pro/dashboard' : '/customer/dashboard', { replace: true });
+      setIsSuccessPending(true);
     } catch (err: any) {
       if (err.message === 'Network Error') {
         setGlobalError(t('networkError'));
@@ -87,6 +67,33 @@ export const RegisterForm: React.FC = () => {
       </ul>
     );
   };
+
+  if (isSuccessPending) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher value={language} onChange={setLanguage} />
+        </div>
+        <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl border border-brand-gray/30 p-8 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-amber-600 mb-6">
+            <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-brand-navy mb-3">Qeydiyyat Tamamlandı</h2>
+          <p className="text-sm text-brand-khaki leading-relaxed mb-6">
+            Hesabınız uğurla yaradıldı! Qeydiyyatınız admin təsdiqindədir. Admin təsdiqlədikdən sonra sistemə daxil ola bilərsiniz.
+          </p>
+          <button
+            onClick={() => navigate('/login')}
+            className="w-full rounded-xl bg-brand-navy py-3 px-4 text-sm font-medium text-brand-gold hover:bg-[#162a40] transition-colors"
+          >
+            Giriş Səhifəsinə Keç
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-ivory p-4">

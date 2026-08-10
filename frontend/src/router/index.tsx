@@ -1,11 +1,13 @@
 import React, { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
 import { CanvaCallback } from '@/components/auth/CanvaCallback';
+import { AdminLogin } from '@/components/admin/AdminLogin';
+import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import App from '@/App';
 import { LandingPage } from '@/components/landing/LandingPage';
 
@@ -38,7 +40,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/admin/login',
-    element: <LoginForm variant="admin" />,
+    element: <AdminLogin />,
   },
   {
     path: '/register',
@@ -88,14 +90,18 @@ export const router = createBrowserRouter([
   },
   {
     path: '/admin/*',
-    element: (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <App />
-      </ProtectedRoute>
-    ),
+    element: <AdminProtectedRoute><Outlet /></AdminProtectedRoute>,
     children: [
       {
+        path: '',
+        element: <Navigate to="/admin/dashboard" replace />,
+      },
+      {
         path: 'dashboard',
+        element: <LazyLoaded><AdminDashboard /></LazyLoaded>,
+      },
+      {
+        path: 'pending-users',
         element: <LazyLoaded><AdminDashboard /></LazyLoaded>,
       }
     ]

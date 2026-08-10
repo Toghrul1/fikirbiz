@@ -87,31 +87,34 @@ async def register(
             detail={"code": "VALIDATION_ERROR", "message": "Şifrə tələblərə cavab vermir", "errors": errors},
         )
         
-    # Yeni istifadəçi hazırla (role='customer')
+    # Yeni istifadəçi hazırla (role='user', is_approved=False)
     user = User(
         first_name=body.first_name,
         last_name=body.last_name,
         email=body.email,
         password_hash=PasswordService.hash_password(body.password),
-        role="customer",
+        role="user",
         plan=body.plan,
+        is_approved=False,
     )
     db.add(user)
     await db.flush()
     
-    # Email göndər (uğursuz olsa belə davam et - tenacity 3 retry edir, amma xəta atsa qeydiyyatı dayandırmırıq)
+    # Telegram bildirişi göndər
+    try:
+        from app.services.telegram_service import TelegramService
+        await TelegramService.send_new_registration_notice(
+            user.first_name, user.last_name, user.email
+        )
+    except Exception:
+        pass
+
+    # Email göndər
     try:
         await EmailService.send_welcome_email(user.email, user.first_name)
     except Exception:
-        pass # Req 1.8: göndərmə uğursuz olsada qeydiyyat prosesi ləğv edilməməlidir
+        pass
         
-    # Tokenləri hazırla
-    access_token = TokenService.create_access_token(user.id, user.role, user.email)
-    raw_refresh, token_hash = TokenService.create_refresh_token()
-    await TokenService.save_refresh_token(db, user.id, token_hash)
-    
-    set_auth_cookies(response, access_token, raw_refresh, remember_me=False)
-    
     return AuthResponse(
         id=user.id,
         email=user.email,
@@ -119,6 +122,7 @@ async def register(
         last_name=user.last_name,
         role=user.role,
         plan=user.plan,
+        is_approved=user.is_approved,
     )
 
 
@@ -167,6 +171,12 @@ async def login(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={"code": "ACCOUNT_INACTIVE", "message": "Hesabınız deaktiv edilib, admin ilə əlaqə saxlayın"},
+        )
+
+    if not user.is_approved:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "ACCOUNT_NOT_APPROVED", "message": "Hesabınız hələ admin tərəfindən təsdiqlənməyib"},
         )
         
     # Uğurlu giriş

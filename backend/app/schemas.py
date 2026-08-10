@@ -39,6 +39,7 @@ class AuthResponse(BaseModel):
     last_name: str
     role: str
     plan: str = "basic"
+    is_approved: bool = False
 
 
 class MessageResponse(BaseModel):
@@ -69,8 +70,26 @@ class UserTableRow(BaseModel):
     registered_at: datetime
     last_login_at: Optional[datetime] = None
     is_active: bool
+    is_approved: bool = True
 
     model_config = {"from_attributes": True}
+
+
+class PendingUserTableRow(BaseModel):
+    id: str
+    first_name: str
+    last_name: str
+    email: str
+    registered_at: datetime
+    is_approved: bool = False
+    role: str = "user"
+
+    model_config = {"from_attributes": True}
+
+
+class PendingUserListResponse(BaseModel):
+    items: list[PendingUserTableRow]
+    total: int
 
 
 class UserListResponse(BaseModel):
@@ -84,6 +103,26 @@ class AdminAnalytics(BaseModel):
     total_users: int
     new_users_today: int
     active_sessions_count: int
+    pending_users_count: int = 0
+
+
+class AdminStats(BaseModel):
+    """Admin dashboard analitik kartları üçün məlumat."""
+    total_users: int
+    pending_users_count: int
+    approved_users_count: int
+    new_users_today: int
+
+
+class AdminLoginResponse(BaseModel):
+    """Uğurlu admin girişində qaytarılan cavab."""
+    id: str
+    email: str
+    first_name: str
+    last_name: str
+    role: str
+    plan: str = "basic"
+    access_token: str
 
 
 # ─── Customer Schemas ────────────────────────────────────────────────

@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     SMTP_FROM_EMAIL: str = "noreply@fikirbiz.com"
     SMTP_FROM_NAME: str = "FikirBiz"
 
+    # Telegram Bot Notification
+    TELEGRAM_BOT_TOKEN: Optional[str] = None
+    TELEGRAM_ADMIN_CHAT_ID: Optional[str] = None
+
     # Canva OAuth
     CANVA_CLIENT_ID: Optional[str] = None
     CANVA_CLIENT_SECRET: Optional[str] = None

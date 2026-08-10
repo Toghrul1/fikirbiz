@@ -58,7 +58,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
         setLockedUntil(err.response.data.detail.locked_until);
         setError(err.response.data.detail.message);
       } else if (err.response?.status === 401 || err.response?.status === 403) {
-        setError(err.response.data.detail.message);
+        const detail = err.response.data?.detail;
+        const msg = typeof detail === 'object' && detail?.message ? detail.message : typeof detail === 'string' ? detail : 'Hesabınız hələ admin tərəfindən təsdiqlənməyib';
+        setError(msg);
       } else if (err.message === 'Network Error') {
         setError(t('networkError'));
         setPassword('');

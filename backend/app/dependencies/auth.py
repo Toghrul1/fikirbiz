@@ -63,6 +63,11 @@ async def get_current_active_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={"code": "ACCOUNT_INACTIVE", "message": "Hesabınız deaktiv edilib, admin ilə əlaqə saxlayın"},
         )
+    if not user.is_approved:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "ACCOUNT_NOT_APPROVED", "message": "Hesabınız hələ admin tərəfindən təsdiqlənməyib"},
+        )
         
     return user
 
@@ -77,3 +82,36 @@ def require_role(*roles: str):
             )
         return payload
     return role_checker
+
+
+async def get_current_admin(
+    payload: Annotated[JWTPayload, Depends(verify_token)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> User:
+    """
+    Bütün /admin/* route-larını qoruyan dependency.
+
+    Token-i yoxlayır, istifadəçinin həm token payload-da, həm də
+    bazada rolunun 'admin' olduğunu təsdiq edir (stale token-lərə qarşı).
+    """
+    if payload.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "ADMIN_ONLY", "message": "Bu panelə yalnız sistem adminləri daxil ola bilər."},
+        )
+
+    result = await db.execute(select(User).where(User.id == payload.sub))
+    user = result.scalar_one_or_none()
+
+    if not user or user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "ADMIN_ONLY", "message": "Bu panelə yalnız sistem adminləri daxil ola bilər."},
+        )
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "ACCOUNT_INACTIVE", "message": "Hesabınız deaktiv edilib, admin ilə əlaqə saxlayın"},
+        )
+
+    return user

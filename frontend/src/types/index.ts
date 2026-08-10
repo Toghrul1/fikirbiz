@@ -5,8 +5,9 @@ export interface AuthUser {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'customer';
+  role: 'admin' | 'customer' | 'user';
   plan: 'basic' | 'pro';
+  isApproved?: boolean;
 }
 
 export interface CustomerProfile {
@@ -27,6 +28,31 @@ export interface UserTableRow {
   registeredAt: string;
   lastLoginAt: string | null;
   isActive: boolean;
+  isApproved?: boolean;
+}
+
+export interface PendingUserTableRow {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  registered_at: string;
+  is_approved: boolean;
+  role: string;
+}
+
+export interface AdminAnalytics {
+  total_users: number;
+  new_users_today: number;
+  active_sessions_count: number;
+  pending_users_count?: number;
+}
+
+export interface AdminStats {
+  total_users: number;
+  pending_users_count: number;
+  approved_users_count: number;
+  new_users_today: number;
 }
 
 // --- Chat / Canva Types ---

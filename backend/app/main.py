@@ -3,19 +3,67 @@ FikirBiz Backend — Main Entry Point.
 """
 
 import time as _time
+import asyncio
 import traceback
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
 from app.core.database import create_tables
 from app.core.limiter import limiter
+from app.core.migrate import run_migrations
 from app.routers import admin, admin_auth, auth, auth_canva, canva, chat, content, customer, images
+
+
+class ExceptionHandlingMiddleware:
+    """İdarə olunmayan xətaları JSON cavabına çevirir.
+
+    FastAPI exception handler-lərindən fərqli olaraq bu middleware
+    CORSMiddleware-in içində qeydiyyatdan keçirilir, beləliklə CORS
+    header-ləri xəta cavablarına da əlavə olunur (əks halda brauzer
+    xətanı "Network Error" kimi göstərir).
+    """
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        try:
+            await self.app(scope, receive, send)
+        except RateLimitExceeded:
+            response = JSONResponse(
+                status_code=429,
+                content={
+                    "detail": {
+                        "code": "RATE_LIMITED",
+                        "message": "Çox tez-tez sorğu göndərdiniz. Bir az sonra yenidən cəhd edin",
+                    }
+                },
+            )
+            try:
+                await response(scope, receive, send)
+            except Exception:
+                pass
+        except Exception as exc:
+            traceback.print_exc()
+            response = JSONResponse(
+                status_code=500,
+                content={
+                    "detail": {"code": "SERVER_ERROR", "message": "Gözlənilməz xəta baş verdi"}
+                },
+            )
+            try:
+                await response(scope, receive, send)
+            except Exception:
+                pass
 
 
 @asynccontextmanager
@@ -27,6 +75,8 @@ async def lifespan(app: FastAPI):
             print("Database tables created successfully")
         except Exception as e:
             print(f"Database init warning: {e}")
+    else:
+        await asyncio.to_thread(run_migrations)
 
     _t1 = _time.perf_counter()
     print(f"[TIMING] startup took {_t1-_t0:.3f}s")
@@ -39,6 +89,10 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+# Xəta middleware-i əvvəl qeydiyyatdan keçirilir ki, CORS middleware-i
+# onun cavablarına da header əlavə etsin.
+app.add_middleware(ExceptionHandlingMiddleware)
 
 # CORS — exact origin list (no wildcards with credentials)
 _cors_origins = [
@@ -59,17 +113,6 @@ app.add_middleware(
 
 # Rate Limiter
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
-
-# Custom Exception Handler for Pydantic/Validation errors or others
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    traceback.print_exc()
-    return JSONResponse(
-        status_code=500,
-        content={"detail": {"code": "SERVER_ERROR", "message": "Gözlənilməz xəta baş verdi"}},
-    )
 
 
 # Routers

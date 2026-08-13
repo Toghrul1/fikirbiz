@@ -62,6 +62,15 @@ export const LandingPage: React.FC = () => {
           <span className="hidden sm:inline text-white/60 text-[10px] sm:text-xs text-right leading-tight">
             {t('topBannerTagline')}
           </span>
+          <button
+            onClick={() => navigate('/admin/login')}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-brand-gold text-xs font-medium transition-colors border border-white/15 shrink-0"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            <span>{t('adminLogin')}</span>
+          </button>
           <LanguageSwitcher value={language} onChange={setLanguage} />
         </div>
       </div>
@@ -149,7 +158,7 @@ export const LandingPage: React.FC = () => {
                 onClick={() => navigate('/login')}
                 className="group w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-navy text-brand-gold font-semibold hover:bg-brand-navy/90 transition-all duration-200 shadow-xl shadow-brand-navy/20 hover:shadow-2xl hover:shadow-brand-navy/30 hover:-translate-y-0.5"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center gap-2">
                   {t('loginCta')}
                   <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -161,6 +170,15 @@ export const LandingPage: React.FC = () => {
                 className="group w-full sm:w-auto px-8 py-3.5 rounded-xl border-2 border-brand-navy/20 text-brand-navy font-semibold hover:bg-brand-navy hover:text-brand-gold hover:border-brand-navy transition-all duration-200 hover:-translate-y-0.5"
               >
                 {t('registerCta')}
+              </button>
+              <button
+                onClick={() => navigate('/admin/login')}
+                className="group w-full sm:w-auto px-5 py-3.5 rounded-xl border border-brand-navy/20 bg-brand-navy/5 text-brand-navy font-medium hover:bg-brand-navy hover:text-white transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4 text-brand-gold" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+                <span>{t('adminLogin')}</span>
               </button>
             </div>
           </div>
@@ -202,12 +220,19 @@ export const LandingPage: React.FC = () => {
       <footer className="border-t border-white/40 bg-white/30 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-5 text-sm text-brand-navy/50">
+            <div className="flex items-center gap-5 text-sm text-brand-navy/50 flex-wrap justify-center md:justify-start">
               <Link to="/haqqimizda" className="hover:text-brand-gold transition-colors duration-200">{t('footerAbout')}</Link>
               <span className="text-brand-navy/20">|</span>
               <Link to="/mexfilik" className="hover:text-brand-gold transition-colors duration-200">{t('footerPrivacy')}</Link>
               <span className="text-brand-navy/20">|</span>
               <Link to="/faq" className="hover:text-brand-gold transition-colors duration-200">{t('footerFaq')}</Link>
+              <span className="text-brand-navy/20">|</span>
+              <Link to="/admin/login" className="hover:text-brand-gold transition-colors duration-200 font-medium text-brand-navy/70 flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 inline text-brand-gold" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+                {t('adminLogin')}
+              </Link>
             </div>
             <div className="text-xs text-brand-navy/40">
               {t('footerRights')}

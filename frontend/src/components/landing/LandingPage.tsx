@@ -201,16 +201,19 @@ export const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {SERVICES.map((service) => (
-              <div
+              <a
                 key={service.titleKey}
-                className="group bg-white/90 backdrop-blur-sm rounded-3xl border border-white/60 shadow-[0_8px_40px_rgba(13,27,42,0.06)] p-6 sm:p-8 hover:shadow-[0_16px_50px_rgba(13,27,42,0.12)] hover:-translate-y-1 transition-all duration-300"
+                href="https://wa.link/0n2met"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white/90 backdrop-blur-sm rounded-3xl border border-white/60 shadow-[0_8px_40px_rgba(13,27,42,0.06)] p-6 sm:p-8 hover:shadow-[0_16px_50px_rgba(13,27,42,0.12)] hover:-translate-y-1 transition-all duration-300 block"
               >
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-gold to-[#C5A031] flex items-center justify-center text-brand-navy shadow-lg shadow-brand-gold/25 mb-5 group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
                 </div>
                 <h3 className="text-lg font-semibold text-brand-navy mb-2">{t(service.titleKey)}</h3>
                 <p className="text-sm text-brand-khaki/80 leading-relaxed">{t(service.descKey)}</p>
-              </div>
+              </a>
             ))}
           </div>
         </div>

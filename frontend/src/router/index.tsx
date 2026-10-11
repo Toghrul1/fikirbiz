@@ -11,6 +11,7 @@ import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import App from '@/App';
 import { LandingPage } from '@/components/landing/LandingPage';
 import { RouteError } from '@/components/common/RouteError';
+import { NavigationBridge } from '@/components/common/NavigationBridge';
 
 const CustomerDashboard = lazy(() => import('@/components/customer/CustomerDashboard'));
 const ProDashboard = lazy(() => import('@/components/customer/ProDashboard'));
@@ -31,6 +32,12 @@ function LazyLoaded({ children }: { children: React.ReactNode }) {
 }
 
 export const router = createBrowserRouter([
+  // Bütün route-lar bu layout route-un içindədir: NavigationBridge
+  // router-u qeydə alır ki, axios interceptor tam səhifə yeniləmədən
+  // naviqasiya edə bilsin.
+  {
+    element: <NavigationBridge />,
+    children: [
   {
     path: '/',
     element: <LandingPage />,
@@ -114,5 +121,7 @@ export const router = createBrowserRouter([
         element: <LazyLoaded><AdminDashboard /></LazyLoaded>,
       }
     ]
+  },
+    ],
   },
 ]);

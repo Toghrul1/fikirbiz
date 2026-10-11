@@ -29,6 +29,7 @@ from app.schemas import (
 from app.services.email_service import EmailService
 from app.services.password_service import PasswordService
 from app.services.token_service import TokenService
+from app.utils.datetime_utils import as_utc
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -242,7 +243,7 @@ async def refresh_token(
     new_access = TokenService.create_access_token(user.id, user.role, user.email, user.plan)
     
     # Determine remember_me based on remaining time of the new RT
-    remaining_days = (rt_model.expires_at - datetime.now(timezone.utc)).days
+    remaining_days = (as_utc(rt_model.expires_at) - datetime.now(timezone.utc)).days
     remember_me = remaining_days > 2
     
     set_auth_cookies(response, new_access, new_raw_refresh, remember_me=remember_me)

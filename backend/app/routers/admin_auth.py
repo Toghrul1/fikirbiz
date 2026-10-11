@@ -25,8 +25,14 @@ from app.services.token_service import TokenService
 router = APIRouter(prefix="/api/admin", tags=["admin-auth"])
 
 
-def _set_admin_cookies(response: Response, access_token: str) -> None:
-    """Admin access token-i HttpOnly cookie olaraq təyin edir."""
+def _set_admin_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+    """
+    Admin tokenlərini HttpOnly cookie olaraq təyin edir.
+
+    DIQQƏT: Refresh token mütləq qoyulmalıdır. Əks halda access token-in
+    60 dəqiqəlik ömrü bitəndə frontend-in token yeniləmə cəhdi uğursuz olur
+    və admin panelinə təkrar daxil olmaq mümkün olmur.
+    """
     secure = not settings.DEBUG
     samesite = "none" if not settings.DEBUG else "lax"
     response.set_cookie(
@@ -36,6 +42,14 @@ def _set_admin_cookies(response: Response, access_token: str) -> None:
         secure=secure,
         samesite=samesite,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=secure,
+        samesite=samesite,
+        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
     )
 
 
@@ -97,7 +111,11 @@ async def admin_login(
     access_token = TokenService.create_access_token(
         user.id, user.role, user.email, user.plan
     )
-    _set_admin_cookies(response, access_token)
+    raw_refresh, refresh_hash = TokenService.create_refresh_token()
+    await TokenService.save_refresh_token(
+        db, user.id, refresh_hash, expires_days=settings.REFRESH_TOKEN_EXPIRE_DAYS
+    )
+    _set_admin_cookies(response, access_token, raw_refresh)
 
     return AdminLoginResponse(
         id=user.id,

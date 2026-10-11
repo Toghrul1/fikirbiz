@@ -1,11 +1,9 @@
 import axios from 'axios';
 import { redirect } from '@/lib/navigation';
-
-// Backend URL-i konfiqurasiyadan və ya mühit dəyişənlərindən götürün
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { API_BASE_URL } from '@/lib/apiBase';
 
 export const axiosInstance = axios.create({
-  baseURL,
+  baseURL: API_BASE_URL,
   withCredentials: true, // HTTPOnly cookielərin göndərilməsi üçün vacibdir
 });
 

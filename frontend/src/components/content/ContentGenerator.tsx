@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { apiUrl } from '@/lib/apiBase';
 import type { ContentGenerateRequest, GeneratedContent } from '@/types';
 import { LANGUAGES } from '@/lib/languages';
 import { useLanguageStore } from '@/store/languageStore';
@@ -45,7 +46,7 @@ export function ContentGenerator() {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/content/generate`, {
+      const response = await fetch(apiUrl('/api/content/generate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

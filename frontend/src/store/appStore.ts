@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { AppState, Message, Session, CanvaDesignLink } from '@/types';
 import { axiosInstance } from '@/lib/axiosInstance';
+import { API_BASE_URL } from '@/lib/apiBase';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE = API_BASE_URL;
 
 export const useAppStore = create<AppState>((set, get) => ({
   sessions: [],

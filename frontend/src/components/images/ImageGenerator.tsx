@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { apiUrl } from '@/lib/apiBase';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from '@/lib/useTranslation';
 
@@ -38,7 +39,7 @@ export function ImageGenerator() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/images/generate`, {
+      const response = await fetch(apiUrl('/api/images/generate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

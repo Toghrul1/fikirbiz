@@ -41,6 +41,12 @@ class Settings(BaseSettings):
     CANVA_CLIENT_SECRET: Optional[str] = None
     CANVA_REDIRECT_URI: str = "http://localhost:8000/api/auth/canva/callback"
 
+    # İlk admin bootstrap (yeni/boş bazada admin panelinin işləməsi üçün)
+    ADMIN_EMAIL: Optional[str] = None
+    ADMIN_PASSWORD: Optional[str] = None
+    ADMIN_FIRST_NAME: Optional[str] = None
+    ADMIN_LAST_NAME: Optional[str] = None
+
     # OpenAI
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-4o"

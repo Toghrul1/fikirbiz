@@ -12,8 +12,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 
+from app.core.bootstrap_admin import count_admins, ensure_admin_user
 from app.core.config import settings
-from app.core.database import create_tables
+from app.core.database import async_session_factory, create_tables
 from app.core.limiter import limiter
 from app.core.migrate import run_migrations
 from app.routers import admin, admin_auth, auth, auth_canva, canva, chat, content, customer, images
@@ -77,6 +78,16 @@ async def lifespan(app: FastAPI):
             print(f"Database init warning: {e}")
     else:
         await asyncio.to_thread(run_migrations)
+
+    # Yeni/boş bazada admin paneli kilidli qalmasın.
+    # Idempotentdir: mövcud admin varsa heç nə dəyişmir, şifrə ezilmir.
+    try:
+        await ensure_admin_user(async_session_factory)
+        admins = await count_admins(async_session_factory)
+        print(f"[ADMIN] admin istifadəçi sayı: {admins}")
+    except Exception as e:
+        # Bootstrap uğursuz olsa da app işləməyə davam edir.
+        print(f"[ADMIN] bootstrap xəbərdarlığı: {e}")
 
     _t1 = _time.perf_counter()
     print(f"[TIMING] startup took {_t1-_t0:.3f}s")

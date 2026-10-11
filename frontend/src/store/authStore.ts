@@ -2,6 +2,28 @@ import { create } from 'zustand';
 import { axiosInstance } from '@/lib/axiosInstance';
 import { AuthUser } from '@/types';
 
+/**
+ * Backend rol adları 'admin' | 'user' qaytarır, route guard-lar isə
+ * 'admin' | 'customer' gözləyir. Burada bir dəfə normallaşdırıb,
+ * bütün komponentlər vahid dəyər alır.
+ */
+export function normalizeRole(role: string | undefined | null): AuthUser['role'] {
+  return role === 'admin' ? 'admin' : 'customer';
+}
+
+/** API cavabını AuthUser-ə çevirir (rol normallaşdırılmış). */
+export function toAuthUser(data: any): AuthUser {
+  return {
+    id: data.id,
+    email: data.email,
+    firstName: data.first_name,
+    lastName: data.last_name,
+    role: normalizeRole(data.role),
+    plan: data.plan === 'pro' ? 'pro' : 'basic',
+    isApproved: data.is_approved,
+  };
+}
+
 interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
@@ -16,14 +38,19 @@ interface AuthState {
   refreshToken: () => Promise<boolean>;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isLoading: true,
   isAuthenticated: false,
   redirectAfterLogin: null,
 
-  setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
-  
+  setUser: (user) =>
+    set({
+      user: user ? { ...user, role: normalizeRole(user.role) } : null,
+      isAuthenticated: !!user,
+      isLoading: false,
+    }),
+
   setRedirectAfterLogin: (path) => set({ redirectAfterLogin: path }),
 
   checkAuth: async () => {
@@ -31,14 +58,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: true });
       const res = await axiosInstance.get('/api/auth/me');
       set({
-        user: {
-          id: res.data.id,
-          email: res.data.email,
-          firstName: res.data.first_name,
-          lastName: res.data.last_name,
-          role: res.data.role,
-          plan: res.data.plan || 'basic',
-        },
+        user: toAuthUser(res.data),
         isAuthenticated: true,
       });
     } catch {

@@ -7,14 +7,27 @@ interface AdminProtectedRouteProps {
 }
 
 export const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({ children }) => {
-  const { user, isLoading, isAuthenticated, setRedirectAfterLogin, checkAuth } = useAuthStore();
+  const user = useAuthStore(s => s.user);
+  const isLoading = useAuthStore(s => s.isLoading);
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+  const setRedirectAfterLogin = useAuthStore(s => s.setRedirectAfterLogin);
+  const checkAuth = useAuthStore(s => s.checkAuth);
   const location = useLocation();
+
+  const isAuthorized = !!user && isAuthenticated && user.role === 'admin';
 
   useEffect(() => {
     if (!user) {
       checkAuth();
     }
   }, [checkAuth, user]);
+
+  // Render zamanında store yazmaq olmaz — bu, yan effektdir.
+  useEffect(() => {
+    if (!isLoading && !isAuthorized) {
+      setRedirectAfterLogin(location.pathname);
+    }
+  }, [isLoading, isAuthorized, location.pathname, setRedirectAfterLogin]);
 
   if (isLoading) {
     return (
@@ -25,8 +38,7 @@ export const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({ childr
   }
 
   // Etibarlı admin tokeni yoxdursa və ya rol admin deyilsə /admin/login-ə yönləndir
-  if (!isAuthenticated || !user || user.role !== 'admin') {
-    setRedirectAfterLogin(location.pathname);
+  if (!isAuthorized) {
     return <Navigate to="/admin/login" replace />;
   }
 

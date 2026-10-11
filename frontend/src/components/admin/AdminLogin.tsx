@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@/lib/axiosInstance';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore, toAuthUser } from '@/store/authStore';
 
 export const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -21,12 +21,7 @@ export const AdminLogin: React.FC = () => {
       const res = await axiosInstance.post('/api/admin/login', { email, password });
 
       useAuthStore.getState().setUser({
-        id: res.data.id,
-        email: res.data.email,
-        firstName: res.data.first_name,
-        lastName: res.data.last_name,
-        role: res.data.role,
-        plan: res.data.plan || 'basic',
+        ...toAuthUser(res.data),
         isApproved: true,
       });
 

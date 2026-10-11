@@ -7,6 +7,7 @@ Pydantic BaseSettings ilə .env faylından konfiqurasiya oxunur.
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
+from pydantic import model_validator
 from typing import Optional
 
 
@@ -60,6 +61,24 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     model_config = {"env_file": str(_ENV_FILE), "extra": "ignore"}
+
+    @model_validator(mode="after")
+    def _validate_secrets(self) -> "Settings":
+        """Production-da zəif və ya default açarlara icazə vermir."""
+        if self.DEBUG:
+            return self
+
+        weak = {
+            "change-me-in-production",
+            "secret",
+            "",
+        }
+        if self.JWT_SECRET.strip() in weak or len(self.JWT_SECRET.strip()) < 32:
+            raise ValueError(
+                "JWT_SECRET production üçün zəif və ya default dəyərdir. "
+                "`.env` faylında 32+ simvol uzunluğunda təsadüfi açıq təyin edin."
+            )
+        return self
 
 
 settings = Settings()

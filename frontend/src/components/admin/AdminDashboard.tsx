@@ -5,7 +5,7 @@ import { UserTableRow, PendingUserTableRow, AdminStats } from '@/types';
 import { useTranslation } from '@/lib/useTranslation';
 
 export const AdminDashboard: React.FC = () => {
-  const { logout, user } = useAuthStore();
+  const { user } = useAuthStore();
   const { t } = useTranslation();
 
   const [users, setUsers] = useState<UserTableRow[]>([]);

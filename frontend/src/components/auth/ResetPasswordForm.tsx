@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from '@/lib/useTranslation';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useLanguageStore } from '@/store/languageStore';
 
 export const ResetPasswordForm: React.FC = () => {
   const { token } = useParams<{ token: string }>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const { language, setLanguage } = useLanguageStore();
   

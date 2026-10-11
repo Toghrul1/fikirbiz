@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AppState, Message, Session, CanvaDesignLink, CanvaDesign, Toast } from '@/types';
+import { AppState, Message, Session, CanvaDesignLink } from '@/types';
 import { axiosInstance } from '@/lib/axiosInstance';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -113,7 +113,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
-  deleteDesign: async (designId) => {
+  deleteDesign: async (_designId) => {
     // Canva API doesn't support design deletion
     get().addToast({
       type: 'warning',

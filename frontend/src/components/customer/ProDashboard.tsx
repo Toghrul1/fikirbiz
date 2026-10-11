@@ -7,9 +7,56 @@ import { Sidebar } from '../chat/Sidebar';
 import { useAppStore } from '@/store/appStore';
 import { CanvaLogo, CanvaPoweredBy } from '../canva/CanvaLogo';
 import { useTranslation } from '@/lib/useTranslation';
+import type { TranslationKey } from '@/lib/translations';
+
+type ProTab = 'content' | 'chat' | 'canva' | 'images';
+
+const TABS: { id: ProTab; short: string; long: string }[] = [
+  { id: 'content', short: '✨ Məzmun', long: 'contentTitle' },
+  { id: 'chat', short: '💬 Chat', long: '💬 AI Chat' },
+  { id: 'canva', short: '🎨 Canva', long: '🎨 Canva Connect' },
+  { id: 'images', short: '🖼️ Şəkil', long: '🖼️ Şəkil' },
+];
+
+/** Tərcümə açarı olan tab üçün "✨ {t(...)}", yoxdursa birbaşa mətn. */
+function tabLongLabel(tab: (typeof TABS)[number], t: (k: TranslationKey) => string) {
+  return tab.id === 'content' ? `✨ ${t(tab.long as TranslationKey)}` : tab.long;
+}
+
+function TabBar({
+  activeTab,
+  onChange,
+  wrapperClassName,
+}: {
+  activeTab: ProTab;
+  onChange: (tab: ProTab) => void;
+  wrapperClassName: string;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <div className={wrapperClassName}>
+      {TABS.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onChange(tab.id)}
+          aria-pressed={activeTab === tab.id}
+          className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
+            activeTab === tab.id
+              ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
+              : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
+          }`}
+        >
+          <span className="sm:hidden">{tab.short}</span>
+          <span className="hidden sm:inline">{tabLongLabel(tab, t)}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export function ProDashboard() {
-  const [activeTab, setActiveTab] = useState<'content' | 'chat' | 'canva' | 'images'>('chat');
+  const [activeTab, setActiveTab] = useState<ProTab>('chat');
   const { toggleSidebar, connector, initiateCanvaAuth, disconnectCanva, designs } = useAppStore();
   const { t } = useTranslation();
 
@@ -28,36 +75,7 @@ export function ProDashboard() {
       <div className={`min-h-screen bg-brand-ivory ${activeTab === 'chat' ? 'md:ml-64' : ''}`}>
         {activeTab === 'chat' ? (
           <>
-            <div className="flex gap-1.5 sm:gap-2 px-4 pt-4 pb-0 overflow-x-auto scrollbar-none">
-              <button
-                onClick={() => setActiveTab('content')}
-                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
-              >
-                <span className="sm:hidden">✨ Məzmun</span>
-                <span className="hidden sm:inline">✨ {t('contentTitle')}</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('chat')}
-                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15"
-              >
-                <span className="sm:hidden">💬 Chat</span>
-                <span className="hidden sm:inline">💬 AI Chat</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('canva')}
-                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
-              >
-                <span className="sm:hidden">🎨 Canva</span>
-                <span className="hidden sm:inline">🎨 Canva Connect</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('images')}
-                className="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray"
-              >
-                <span className="sm:hidden">🖼️ Şəkil</span>
-                <span className="hidden sm:inline">🖼️ Şəkil</span>
-              </button>
-            </div>
+            <TabBar activeTab={activeTab} onChange={setActiveTab} wrapperClassName="flex gap-1.5 sm:gap-2 px-4 pt-4 pb-0 overflow-x-auto scrollbar-none" />
             <main className="flex flex-1 flex-col relative w-full min-w-0 overflow-hidden">
               <header className="flex h-14 shrink-0 items-center justify-between border-b border-black/[0.04] bg-white/60 backdrop-blur-xl px-4 md:hidden">
                 <button
@@ -91,52 +109,7 @@ export function ProDashboard() {
               <p className="text-brand-khaki">{t('contentDesc')}</p>
             </div>
 
-            <div className="flex gap-1.5 sm:gap-2 mb-6 overflow-x-auto scrollbar-none -mx-2 px-2">
-              <button
-                onClick={() => setActiveTab('content')}
-                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
-                  activeTab === 'content'
-                    ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
-                    : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
-                }`}
-              >
-                <span className="sm:hidden">✨ Məzmun</span>
-                <span className="hidden sm:inline">✨ {t('contentTitle')}</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('chat')}
-                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
-                  activeTab === 'chat'
-                    ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
-                    : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
-                }`}
-              >
-                <span className="sm:hidden">💬 Chat</span>
-                <span className="hidden sm:inline">💬 AI Chat</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('canva')}
-                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
-                  activeTab === 'canva'
-                    ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
-                    : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
-                }`}
-              >
-                <span className="sm:hidden">🎨 Canva</span>
-                <span className="hidden sm:inline">🎨 Canva Connect</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('images')}
-                className={`flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
-                  activeTab === 'images'
-                    ? 'bg-brand-navy text-brand-gold shadow-lg shadow-brand-navy/15'
-                    : 'bg-white text-brand-khaki hover:bg-brand-gray/30 border border-brand-gray'
-                }`}
-              >
-                <span className="sm:hidden">🖼️ Şəkil</span>
-                <span className="hidden sm:inline">🖼️ Şəkil</span>
-              </button>
-            </div>
+            <TabBar activeTab={activeTab} onChange={setActiveTab} wrapperClassName="flex gap-1.5 sm:gap-2 mb-6 overflow-x-auto scrollbar-none -mx-2 px-2" />
 
             {activeTab === 'content' && (
               <div className="px-4">

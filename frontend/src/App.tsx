@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useLanguageStore } from '@/store/languageStore';
 import { useAuthStore } from '@/store/authStore';
@@ -6,21 +6,15 @@ import { useTranslation } from '@/lib/useTranslation';
 
 function App() {
   const { language, setLanguage } = useLanguageStore();
-  const { user } = useAuthStore();
+  const logout = useAuthStore(s => s.logout);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-    } catch {
-      // backend cavab verməsə belə logout
-    }
-    useAuthStore.getState().setUser(null);
+    // Store-un logout() metodu cookie və axios interceptor-lərindən keçir.
+    await logout();
     localStorage.removeItem('sessions');
-    window.location.href = '/login';
+    navigate('/login', { replace: true });
   };
 
   return (

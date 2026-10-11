@@ -10,6 +10,7 @@ import { AdminLogin } from '@/components/admin/AdminLogin';
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import App from '@/App';
 import { LandingPage } from '@/components/landing/LandingPage';
+import { RouteError } from '@/components/common/RouteError';
 
 const CustomerDashboard = lazy(() => import('@/components/customer/CustomerDashboard'));
 const ProDashboard = lazy(() => import('@/components/customer/ProDashboard'));
@@ -33,6 +34,12 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <LandingPage />,
+    // Bu səhifə də daxil olmaqla bütün route xətaları üçün.
+    errorElement: <RouteError />,
+  },
+  {
+    path: '*',
+    element: <RouteError notFound />,
   },
   {
     path: '/login',
@@ -65,6 +72,7 @@ export const router = createBrowserRouter([
         <App />
       </ProtectedRoute>
     ),
+    errorElement: <RouteError />,
     children: [
       {
         path: 'dashboard',
@@ -91,6 +99,7 @@ export const router = createBrowserRouter([
   {
     path: '/admin/*',
     element: <AdminProtectedRoute><Outlet /></AdminProtectedRoute>,
+    errorElement: <RouteError />,
     children: [
       {
         path: '',

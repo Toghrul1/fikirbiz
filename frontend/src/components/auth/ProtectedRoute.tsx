@@ -13,14 +13,27 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   redirectTo, 
   children 
 }) => {
-  const { user, isLoading, isAuthenticated, setRedirectAfterLogin, checkAuth } = useAuthStore();
+  const user = useAuthStore(s => s.user);
+  const isLoading = useAuthStore(s => s.isLoading);
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+  const setRedirectAfterLogin = useAuthStore(s => s.setRedirectAfterLogin);
+  const checkAuth = useAuthStore(s => s.checkAuth);
   const location = useLocation();
+
+  const hasAccess = !!isAuthenticated && !!user && allowedRoles.includes(user.role);
 
   useEffect(() => {
     if (!user) {
       checkAuth();
     }
   }, [checkAuth, user]);
+
+  // Render zamanında store yazmaq yan effektdir — effect-ə köçürülür.
+  useEffect(() => {
+    if (!isLoading && !hasAccess) {
+      setRedirectAfterLogin(location.pathname);
+    }
+  }, [isLoading, hasAccess, location.pathname, setRedirectAfterLogin]);
 
   if (isLoading) {
     return (
@@ -31,8 +44,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!isAuthenticated || !user) {
-    // Saxla və redirect et
-    setRedirectAfterLogin(location.pathname);
     const defaultRedirect = allowedRoles.includes('admin') && allowedRoles.length === 1 
       ? '/admin/login' 
       : '/login';

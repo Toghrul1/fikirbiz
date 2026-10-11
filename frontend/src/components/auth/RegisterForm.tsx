@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from '@/lib/useTranslation';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useLanguageStore } from '@/store/languageStore';
+
+interface FieldErrors {
+  email?: string;
+  password?: string[];
+}
 
 export const RegisterForm: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -12,6 +16,16 @@ export const RegisterForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSuccessPending, setIsSuccessPending] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [globalError, setGlobalError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { language, setLanguage } = useLanguageStore();
+
+  const params = new URLSearchParams(window.location.search);
+  const planFromUrl = params.get('plan') || 'basic';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,15 +94,15 @@ export const RegisterForm: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-brand-navy mb-3">Qeydiyyat Tamamlandı</h2>
+          <h2 className="text-2xl font-bold text-brand-navy mb-3">{t('registrationComplete')}</h2>
           <p className="text-sm text-brand-khaki leading-relaxed mb-6">
-            Hesabınız uğurla yaradıldı! Qeydiyyatınız admin təsdiqindədir. Admin təsdiqlədikdən sonra sistemə daxil ola bilərsiniz.
+            {t('registrationCompleteBody')}
           </p>
           <button
             onClick={() => navigate('/login')}
             className="w-full rounded-xl bg-brand-navy py-3 px-4 text-sm font-medium text-brand-gold hover:bg-[#162a40] transition-colors"
           >
-            Giriş Səhifəsinə Keç
+            {t('goToLogin')}
           </button>
         </div>
       </div>

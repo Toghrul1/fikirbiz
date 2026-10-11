@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore, toAuthUser } from '@/store/authStore';
 import { axiosInstance } from '@/lib/axiosInstance';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from '@/lib/useTranslation';
@@ -35,19 +35,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ variant = 'customer' }) =>
 
     try {
       const res = await axiosInstance.post('/api/auth/login', { email, password, remember_me: rememberMe });
-      
-      useAuthStore.getState().setUser({
-        id: res.data.id,
-        email: res.data.email,
-        firstName: res.data.first_name,
-        lastName: res.data.last_name,
-        role: res.data.role,
-        plan: res.data.plan || 'basic'
-      });
 
-      const plan = res.data.plan || 'basic';
+      const user = toAuthUser(res.data);
+      useAuthStore.getState().setUser(user);
+
+      const plan = user.plan;
       const redirectPath = redirectAfterLogin || (
-        res.data.role === 'admin' ? '/admin/dashboard'
+        user.role === 'admin' ? '/admin/dashboard'
         : plan === 'pro' ? '/customer/pro/dashboard'
         : '/customer/dashboard'
       );

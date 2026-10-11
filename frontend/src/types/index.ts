@@ -5,7 +5,7 @@ export interface AuthUser {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'customer' | 'user';
+  role: 'admin' | 'customer';
   plan: 'basic' | 'pro';
   isApproved?: boolean;
 }

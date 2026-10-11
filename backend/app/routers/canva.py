@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(
     prefix="/api/canva",
     tags=["canva"],
-    dependencies=[Depends(require_role("customer"))],
+    dependencies=[Depends(require_role("customer", "admin"))],
 )
 
 # Maksimum fayl ölçüsü (50 MB images, 500 MB videos)

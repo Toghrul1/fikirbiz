@@ -25,7 +25,7 @@ from app.services.mistral_service import OpenAIService
 router = APIRouter(
     prefix="/api/chat",
     tags=["chat"],
-    dependencies=[Depends(require_role("customer"))],
+    dependencies=[Depends(require_role("customer", "admin"))],
 )
 
 

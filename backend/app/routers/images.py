@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(
     prefix="/api/images",
     tags=["images"],
-    dependencies=[Depends(require_role("customer"))],
+    dependencies=[Depends(require_role("customer", "admin"))],
 )
 
 PROMPT_MIN_LENGTH = 3

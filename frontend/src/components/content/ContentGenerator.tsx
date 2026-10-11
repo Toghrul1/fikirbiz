@@ -63,7 +63,14 @@ export function ContentGenerator() {
       });
 
       if (!response.ok) {
-        throw new Error('Content generation failed');
+        // Backend detail-də səbəb göndərir (məs. 403 FORBIDDEN, 429 rate limit).
+        const detail = await response.json().catch(() => null);
+        const reason = detail?.detail?.message;
+        throw new Error(
+          reason
+            ? `${t('generationFailed')} (${response.status}): ${reason}`
+            : `${t('generationFailed')} (${response.status})`,
+        );
       }
 
       const reader = response.body?.getReader();

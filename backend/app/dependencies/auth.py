@@ -72,15 +72,38 @@ async def get_current_active_user(
     return user
 
 
+def normalize_role(role: str | None) -> str:
+    """
+    Rol adlarını vahid formaya salır.
+
+    Tarixən iki ad işlədilib: `register` endpoint-i `role="user"` yazır,
+    router-lərin guard-ları isə `require_role("customer")` gözləyirdi.
+    Nəticədə heç bir istifadəçi (hətta admin) bu endpoint-lərə
+    daxil ola bilmirdi. İndi hər iki yazım eyni rola uyğun gəlir.
+    """
+    if not role:
+        return "unknown"
+    role = role.strip().lower()
+    if role == "user":
+        return "customer"
+    return role
+
+
 def require_role(*roles: str):
-    """Rol əsaslı giriş nəzarəti (RBAC)."""
+    """Rol əsaslı giriş nəzarəti (RBAC).
+
+    'admin' rolu bütün müştəri endpoint-lərinə daxil olur.
+    """
+    wanted = {normalize_role(r) for r in roles}
+
     async def role_checker(payload: Annotated[JWTPayload, Depends(verify_token)]) -> JWTPayload:
-        if payload.role not in roles:
+        if normalize_role(payload.role) not in wanted:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail={"code": "FORBIDDEN", "message": "Bu əməliyyat üçün icazəniz yoxdur"},
             )
         return payload
+
     return role_checker
 
 

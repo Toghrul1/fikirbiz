@@ -27,7 +27,7 @@ from app.services.canva_service import get_connection_status
 router = APIRouter(
     prefix="/api/customer",
     tags=["customer"],
-    dependencies=[Depends(require_role("customer"))],
+    dependencies=[Depends(require_role("customer", "admin"))],
 )
 
 

@@ -16,7 +16,7 @@ from app.services.content_service import ContentService
 router = APIRouter(
     prefix="/api/content",
     tags=["content"],
-    dependencies=[Depends(require_role("customer"))],
+    dependencies=[Depends(require_role("customer", "admin"))],
 )
 
 
